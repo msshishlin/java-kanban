@@ -8,7 +8,6 @@ import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 // endregion
@@ -74,8 +73,8 @@ public final class TaskManager {
      *
      * @return коллекция задач.
      */
-    public Collection<Task> getAllTasks() {
-        return this.tasks.values();
+    public ArrayList<Task> getAllTasks() {
+        return new ArrayList<>(this.tasks.values());
     }
 
     /**
@@ -156,7 +155,7 @@ public final class TaskManager {
      * @param epic эпик.
      * @return коллекция подзадач.
      */
-    public Collection<SubTask> getSubTasksByEpic(Epic epic) {
+    public ArrayList<SubTask> getSubTasksByEpic(Epic epic) {
         ArrayList<SubTask> subTasks = new ArrayList<>();
 
         for (SubTask subTask : this.subTasks.values()) {
@@ -173,8 +172,8 @@ public final class TaskManager {
      *
      * @return коллекция подзадач.
      */
-    public Collection<SubTask> getAllSubTasks() {
-        return this.subTasks.values();
+    public ArrayList<SubTask> getAllSubTasks() {
+        return new ArrayList<>(this.subTasks.values());
     }
 
     /**
@@ -277,8 +276,8 @@ public final class TaskManager {
      *
      * @return коллекция эпиков.
      */
-    public Collection<Epic> getAllEpics() {
-        return this.epics.values();
+    public ArrayList<Epic> getAllEpics() {
+        return new ArrayList<>(this.epics.values());
     }
 
     /**

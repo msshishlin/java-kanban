@@ -4,7 +4,7 @@ package ru.yandex.practicum.models;
 
 import ru.yandex.practicum.constants.TaskStatus;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 //endregion
@@ -54,8 +54,8 @@ public final class Epic extends Task {
      * Получить все подзадачи эпика.
      * @return коллекция подзадач.
      */
-    public Collection<SubTask> getAllSubTasks() {
-        return this.subTasks.values();
+    public ArrayList<SubTask> getAllSubTasks() {
+        return new ArrayList<>(this.subTasks.values());
     }
 
     /**
