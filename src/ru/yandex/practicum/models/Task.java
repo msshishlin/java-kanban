@@ -20,22 +20,22 @@ public class Task {
     /**
      * Идентификатор задачи.
      */
-    protected final int _id;
+    protected final int id;
 
     /**
      * Название задачи.
      */
-    protected String _name;
+    protected String name;
 
     /**
      * Описание задачи.
      */
-    protected String _description;
+    protected String description;
 
     /**
      * Статус задачи.
      */
-    protected TaskStatus _status;
+    protected TaskStatus status;
 
     /**
      * Конструктор.
@@ -49,10 +49,10 @@ public class Task {
         if (description == null || description.trim().isEmpty())
             throw new IllegalArgumentException("Parameter 'description' can't be null or empty or whitespace");
 
-        this._id = ++INSTANCE_COUNT;
-        this._name = name;
-        this._description = description;
-        this._status = TaskStatus.NEW;
+        this.id = ++INSTANCE_COUNT;
+        this.name = name;
+        this.description = description;
+        this.status = TaskStatus.NEW;
     }
 
     /**
@@ -63,10 +63,10 @@ public class Task {
     public Task(Task otherTask) {
         if (otherTask == null) throw new IllegalArgumentException("Parameter 'otherTask' can't be null");
 
-        this._id = otherTask._id;
-        this._name = otherTask._name;
-        this._description = otherTask._description;
-        this._status = otherTask._status;
+        this.id = otherTask.id;
+        this.name = otherTask.name;
+        this.description = otherTask.description;
+        this.status = otherTask.status;
     }
 
     /**
@@ -75,7 +75,7 @@ public class Task {
      * @return идентификатор задачи.
      */
     public int getId() {
-        return this._id;
+        return this.id;
     }
 
     /**
@@ -84,7 +84,7 @@ public class Task {
      * @return название задачи.
      */
     public String getName() {
-        return this._name;
+        return this.name;
     }
 
     /**
@@ -93,7 +93,7 @@ public class Task {
      * @return описание задачи.
      */
     public String getDescription() {
-        return this._description;
+        return this.description;
     }
 
     /**
@@ -102,7 +102,7 @@ public class Task {
      * @return статус задачи.
      */
     public TaskStatus getStatus() {
-        return this._status;
+        return this.status;
     }
 
     /**
@@ -113,7 +113,7 @@ public class Task {
     public void setStatus(TaskStatus newStatus) {
         if (newStatus == null) throw new IllegalArgumentException("Parameter 'newStatus' can't be null");
 
-        this._status = newStatus;
+        this.status = newStatus;
     }
 
     @Override
@@ -122,16 +122,16 @@ public class Task {
         if (obj == null || this.getClass() != obj.getClass()) return false;
 
         Task otherTask = (Task) obj;
-        return this._id == otherTask._id;
+        return this.id == otherTask.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this._id);
+        return Objects.hashCode(this.id);
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this._id + ", " + "name: " + this._name + ", " + "description: " + this._description + ", " + "status: " + this._status.name() + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + "}";
     }
 }

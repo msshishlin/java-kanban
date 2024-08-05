@@ -7,7 +7,7 @@ public final class SubTask extends Task {
     /**
      * Эпик.
      */
-    private Epic _epic;
+    private Epic epic;
 
     /**
      * Конструктор.
@@ -20,8 +20,8 @@ public final class SubTask extends Task {
         super(name, description);
 
         if (epic == null) throw new IllegalArgumentException("Parameter 'epic' can't be null");
-        this._epic = epic;
-        this._epic.addSubTask(this);
+        this.epic = epic;
+        this.epic.addSubTask(this);
     }
 
     /**
@@ -32,7 +32,7 @@ public final class SubTask extends Task {
     public SubTask(SubTask otherSubTask) {
         super(otherSubTask);
 
-        this._epic = otherSubTask._epic;
+        this.epic = otherSubTask.epic;
     }
 
     /**
@@ -41,7 +41,7 @@ public final class SubTask extends Task {
      * @return эпик.
      */
     public Epic getEpic() {
-        return this._epic;
+        return this.epic;
     }
 
     /**
@@ -50,11 +50,11 @@ public final class SubTask extends Task {
      * @param newEpic новый эпик.
      */
     public void setEpic(Epic newEpic) {
-        this._epic = newEpic;
+        this.epic = newEpic;
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this._id + ", " + "name: " + this._name + ", " + "description: " + this._description + ", " + "status: " + this._status.name() + ", " + "epic: " + this._epic + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + ", " + "epic: " + this.epic + "}";
     }
 }

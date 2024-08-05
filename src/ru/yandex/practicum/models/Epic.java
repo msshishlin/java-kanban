@@ -16,7 +16,7 @@ public final class Epic extends Task {
     /**
      * Коллекция подзадач.
      */
-    private final HashMap<Integer, SubTask> _subTasks;
+    private final HashMap<Integer, SubTask> subTasks;
 
     /**
      * Конструктор.
@@ -27,7 +27,7 @@ public final class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
 
-        this._subTasks = new HashMap<>();
+        this.subTasks = new HashMap<>();
     }
 
     /**
@@ -38,16 +38,16 @@ public final class Epic extends Task {
     public void addSubTask(SubTask subTask) {
         if (subTask == null) throw new IllegalArgumentException("Parameter subTask can't be null");
 
-        if (this._subTasks.containsKey(subTask.getId())) {
+        if (this.subTasks.containsKey(subTask.getId())) {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже добавлена в эпик");
         }
 
-        if (subTask.getEpic() != null && subTask.getEpic().getId() != this._id) {
+        if (subTask.getEpic() != null && subTask.getEpic().getId() != this.id) {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже связана с другим эпиком");
         }
 
         subTask.setEpic(this);
-        this._subTasks.put(subTask.getId(), subTask);
+        this.subTasks.put(subTask.getId(), subTask);
     }
 
     /**
@@ -55,7 +55,7 @@ public final class Epic extends Task {
      * @return коллекция подзадач.
      */
     public Collection<SubTask> getAllSubTasks() {
-        return this._subTasks.values();
+        return this.subTasks.values();
     }
 
     /**
@@ -67,7 +67,7 @@ public final class Epic extends Task {
         if (subTask == null) throw new IllegalArgumentException("Parameter subTask can't be null");
 
         subTask.setEpic(this);
-        this._subTasks.put(subTask.getId(), subTask);
+        this.subTasks.put(subTask.getId(), subTask);
     }
 
     /**
@@ -78,29 +78,29 @@ public final class Epic extends Task {
     public void removeSubTask(SubTask subTask) {
         if (subTask == null) throw new IllegalArgumentException("Parameter subTask can't be null");
 
-        this._subTasks.remove(subTask.getId());
+        this.subTasks.remove(subTask.getId());
     }
 
     /**
      * Удалить все подзадачи.
      */
     public void removeAllSubTasks() {
-        this._subTasks.clear();
+        this.subTasks.clear();
     }
 
     /**
      * Обновить статус эпика.
      */
     public void updateStatus() {
-        if (this._subTasks.isEmpty()) {
-            this._status = TaskStatus.NEW;
+        if (this.subTasks.isEmpty()) {
+            this.status = TaskStatus.NEW;
             return;
         }
 
         int newCount = 0;
         int doneCount = 0;
 
-        for (SubTask subTask : this._subTasks.values()) {
+        for (SubTask subTask : this.subTasks.values()) {
             switch (subTask.getStatus()) {
                 case NEW:
                     newCount++;
@@ -111,17 +111,17 @@ public final class Epic extends Task {
             }
         }
 
-        if (newCount == this._subTasks.size()) {
-            this._status = TaskStatus.NEW;
-        } else if (doneCount == this._subTasks.size()) {
-            this._status = TaskStatus.DONE;
+        if (newCount == this.subTasks.size()) {
+            this.status = TaskStatus.NEW;
+        } else if (doneCount == this.subTasks.size()) {
+            this.status = TaskStatus.DONE;
         } else {
-            this._status = TaskStatus.IN_PROGRESS;
+            this.status = TaskStatus.IN_PROGRESS;
         }
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this._id + ", " + "name: " + this._name + ", " + "description: " + this._description + ", " + "status: " + this._status.name() + ", " + "sub_task_count: " + this._subTasks.size() + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + ", " + "sub_task_count: " + this.subTasks.size() + "}";
     }
 }
