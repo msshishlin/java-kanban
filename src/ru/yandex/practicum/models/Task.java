@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * Задача.
  */
-public class Task {
+public class Task implements Cloneable {
     /**
      * Количество созданных экземпляров типа Task.
      */
@@ -25,12 +25,12 @@ public class Task {
     /**
      * Название задачи.
      */
-    protected String name;
+    protected final String name;
 
     /**
      * Описание задачи.
      */
-    protected String description;
+    protected final String description;
 
     /**
      * Статус задачи.
@@ -44,10 +44,13 @@ public class Task {
      * @param description описание задачи.
      */
     public Task(String name, String description) {
-        if (name == null || name.trim().isEmpty())
+        if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Parameter 'name' can't be null or empty or whitespace");
-        if (description == null || description.trim().isEmpty())
+        }
+
+        if (description == null || description.trim().isEmpty()) {
             throw new IllegalArgumentException("Parameter 'description' can't be null or empty or whitespace");
+        }
 
         this.id = ++INSTANCE_COUNT;
         this.name = name;
@@ -58,15 +61,16 @@ public class Task {
     /**
      * Конструктор.
      *
-     * @param otherTask другая задача.
+     * @param id          идентификатор задачи.
+     * @param name        название задачи.
+     * @param description описание задачи.
+     * @param status      статус задачи.
      */
-    public Task(Task otherTask) {
-        if (otherTask == null) throw new IllegalArgumentException("Parameter 'otherTask' can't be null");
-
-        this.id = otherTask.id;
-        this.name = otherTask.name;
-        this.description = otherTask.description;
-        this.status = otherTask.status;
+    protected Task(int id, String name, String description, TaskStatus status) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
     }
 
     /**
@@ -116,6 +120,8 @@ public class Task {
         this.status = newStatus;
     }
 
+    // region Overrides of java.lang.Object
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -132,6 +138,18 @@ public class Task {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", "
+                + "description: " + this.description + ", " + "status: " + this.status.name() + "}";
     }
+
+    // region Implements of Cloneable
+
+    @Override
+    public Task clone() {
+        return new Task(this.id, this.name, this.description, this.status);
+    }
+
+    // endregion
+
+    // endregion
 }

@@ -1,8 +1,11 @@
-package ru.yandex.practicum;
+package ru.yandex.practicum.managers.tasks;
 
 //region imports
 
+import ru.yandex.practicum.abstractions.HistoryManager;
+import ru.yandex.practicum.abstractions.TaskManager;
 import ru.yandex.practicum.constants.TaskStatus;
+import ru.yandex.practicum.managers.history.InMemoryHistoryManager;
 import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
@@ -12,7 +15,7 @@ import java.util.HashMap;
 
 // endregion
 
-public final class TaskManager {
+public final class InMemoryTaskManager implements TaskManager {
     /**
      * Список задач.
      */
@@ -29,12 +32,19 @@ public final class TaskManager {
     public final HashMap<Integer, Epic> epics;
 
     /**
+     * История просмотра задач.
+     */
+    private final HistoryManager<Task> historyManager;
+
+    /**
      * Конструктор.
      */
-    public TaskManager() {
+    public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.subTasks = new HashMap<>();
         this.epics = new HashMap<>();
+
+        this.historyManager = new InMemoryHistoryManager<>(10);
     }
 
     //region Задачи
@@ -45,7 +55,9 @@ public final class TaskManager {
      * @param task задача.
      */
     public void createTask(Task task) {
-        if (task == null) throw new IllegalArgumentException("Parameter 'task' can't be null");
+        if (task == null) {
+            throw new IllegalArgumentException("Parameter 'task' can't be null");
+        }
 
         if (task.getStatus() != TaskStatus.NEW) {
             throw new IllegalStateException("Создание задачи возможно только в статусе 'NEW'. Текущий статус: '" + task.getStatus().name() + "'");
@@ -65,7 +77,11 @@ public final class TaskManager {
      * @return задача.
      */
     public Task getTaskById(int taskId) {
-        return this.tasks.get(taskId);
+        Task task = this.tasks.get(taskId);
+
+        this.historyManager.add(task);
+
+        return task;
     }
 
     /**
@@ -83,10 +99,12 @@ public final class TaskManager {
      * @param task задача.
      */
     public void updateTask(Task task) {
-        if (task == null) throw new IllegalArgumentException("Parameter 'task' can't be null");
+        if (task == null) {
+            throw new IllegalArgumentException("Parameter 'task' can't be null");
+        }
 
         if (!this.tasks.containsKey(task.getId())) {
-            throw new IllegalStateException("Задачи с идентификатором " + task.getId() + " не существует");
+            throw new IllegalStateException("Задача с идентификатором " + task.getId() + " не найден");
         }
 
         this.tasks.put(task.getId(), task);
@@ -98,6 +116,10 @@ public final class TaskManager {
      * @param taskId идентификатор задачи.
      */
     public void removeTaskById(int taskId) {
+        if (!this.tasks.containsKey(taskId)) {
+            throw new IllegalStateException("Задача с идентификатором " + taskId + " не найдена");
+        }
+
         this.tasks.remove(taskId);
     }
 
@@ -118,7 +140,9 @@ public final class TaskManager {
      * @param subTask подзадача.
      */
     public void createSubTask(SubTask subTask) {
-        if (subTask == null) throw new IllegalArgumentException("Parameter 'subTask' can't be null");
+        if (subTask == null) {
+            throw new IllegalArgumentException("Parameter 'subTask' can't be null");
+        }
 
         if (this.subTasks.containsKey(subTask.getId())) {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " уже создана");
@@ -128,12 +152,12 @@ public final class TaskManager {
             throw new IllegalStateException("Создание подзадачи возможно только в статусе 'NEW'. Текущий статус: '" + subTask.getStatus().name() + "'");
         }
 
-        if (subTask.getEpic() == null) {
-            throw new IllegalStateException("Создание подзадачи без эпика невозможно");
-        }
-
         if (!this.epics.containsKey(subTask.getEpic().getId())) {
             throw new IllegalStateException("Создание подзадачи возможно только после создания эпика");
+        }
+
+        if (this.epics.get(subTask.getEpic().getId()).getSubTaskById(subTask.getId()) == null) {
+            throw new IllegalStateException("Создание подзадачи возможно только после её добавления в эпик");
         }
 
         this.subTasks.put(subTask.getId(), subTask);
@@ -146,7 +170,11 @@ public final class TaskManager {
      * @return подзадача.
      */
     public SubTask getSubTaskById(int subTaskId) {
-        return this.subTasks.get(subTaskId);
+        SubTask subtask = this.subTasks.get(subTaskId);
+
+        this.historyManager.add(subtask);
+
+        return subtask;
     }
 
     /**
@@ -182,23 +210,16 @@ public final class TaskManager {
      * @param subTask подзадача.
      */
     public void updateSubTask(SubTask subTask) {
-        if (subTask == null) throw new IllegalArgumentException("Parameter 'subTask' can't be null");
+        if (subTask == null) {
+            throw new IllegalArgumentException("Parameter 'subTask' can't be null");
+        }
 
         if (!this.subTasks.containsKey(subTask.getId())) {
-            throw new IllegalStateException("Подзадачи с идентификатором " + subTask.getId() + " не существует");
+            throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " не найдена");
         }
 
-        Epic epic = subTask.getEpic();
-        if (epic == null) {
-            throw new IllegalStateException("Удаление эпика у подзадачи запрещено");
-        }
-
-        if (!this.epics.containsKey(epic.getId())) {
-            throw new IllegalStateException("Обновление эпика подзадачи возможно только после создания эпика");
-        }
-
-        epic.updateSubTask(subTask);
-        epic.updateStatus();
+        subTask.getEpic().updateSubTask(subTask);
+        subTask.getEpic().updateStatus();
 
         this.subTasks.put(subTask.getId(), subTask);
     }
@@ -209,16 +230,14 @@ public final class TaskManager {
      * @param subTaskId идентификатор подзадачи
      */
     public void removeSubTaskById(int subTaskId) {
-        SubTask subTask = this.subTasks.get(subTaskId);
-        if (subTask == null) {
-            return;
+        if (!this.subTasks.containsKey(subTaskId)) {
+            throw new IllegalStateException("Подзадача с идентификатором " + subTaskId + " не найдена");
         }
 
-        Epic epic = subTask.getEpic();
-        if (epic != null) {
-            epic.removeSubTask(subTask);
-            epic.updateStatus();
-        }
+        SubTask subTask = this.subTasks.get(subTaskId);
+
+        subTask.getEpic().removeSubTask(subTask);
+        subTask.getEpic().updateStatus();
 
         this.subTasks.remove(subTaskId);
     }
@@ -248,7 +267,9 @@ public final class TaskManager {
      * @param epic эпик.
      */
     public void createEpic(Epic epic) {
-        if (epic == null) throw new IllegalArgumentException("Parameter 'epic' can't be null");
+        if (epic == null) {
+            throw new IllegalArgumentException("Parameter 'epic' can't be null");
+        }
 
         if (epic.getStatus() != TaskStatus.NEW) {
             throw new IllegalStateException("Создание эпика возможно только в статусе 'NEW'. Текущий статус: '" + epic.getStatus().name() + "'");
@@ -268,7 +289,11 @@ public final class TaskManager {
      * @return эпик.
      */
     public Epic getEpicById(int epicId) {
-        return this.epics.get(epicId);
+        Epic epic = this.epics.get(epicId);
+
+        this.historyManager.add(epic);
+
+        return epic;
     }
 
     /**
@@ -286,10 +311,12 @@ public final class TaskManager {
      * @param epic эпик.
      */
     public void updateEpic(Epic epic) {
-        if (epic == null) throw new IllegalArgumentException("Parameter 'epic' can't be null");
+        if (epic == null) {
+            throw new IllegalArgumentException("Parameter 'epic' can't be null");
+        }
 
         if (!this.epics.containsKey(epic.getId())) {
-            throw new IllegalStateException("Эпик с идентификатором " + epic.getId() + " не существует");
+            throw new IllegalStateException("Эпик с идентификатором " + epic.getId() + " не найден");
         }
 
         this.epics.put(epic.getId(), epic);
@@ -301,10 +328,11 @@ public final class TaskManager {
      * @param epicId идентификатор эпика.
      */
     public void removeEpicById(int epicId) {
-        Epic epic = this.epics.get(epicId);
-        if (epic == null) {
-            return;
+        if (!this.epics.containsKey(epicId)) {
+            throw new IllegalStateException("Эпик с идентификатором " + epicId + " не найден");
         }
+
+        Epic epic = this.epics.get(epicId);
 
         for (SubTask subTask : epic.getAllSubTasks()) {
             this.subTasks.remove(subTask.getId());

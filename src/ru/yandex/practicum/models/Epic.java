@@ -31,12 +31,29 @@ public final class Epic extends Task {
     }
 
     /**
+     * Конструктор.
+     *
+     * @param id          идентификатор задачи.
+     * @param name        название задачи.
+     * @param description описание задачи.
+     * @param status      статус задачи.
+     * @param subTasks    коллекция подзадач.
+     */
+    private Epic(int id, String name, String description, TaskStatus status, HashMap<Integer, SubTask> subTasks) {
+        super(id, name, description, status);
+
+        this.subTasks = subTasks;
+    }
+
+    /**
      * Добавить подзадачу.
      *
      * @param subTask подзадача.
      */
     public void addSubTask(SubTask subTask) {
-        if (subTask == null) throw new IllegalArgumentException("Parameter subTask can't be null");
+        if (subTask == null) {
+            throw new IllegalArgumentException("Parameter subTask can't be null");
+        }
 
         if (this.subTasks.containsKey(subTask.getId())) {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже добавлена в эпик");
@@ -46,12 +63,22 @@ public final class Epic extends Task {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже связана с другим эпиком");
         }
 
-        subTask.setEpic(this);
         this.subTasks.put(subTask.getId(), subTask);
     }
 
     /**
+     * Получить подзадачу по её идентификатору.
+     *
+     * @param subTaskId идентификатор подзадачи.
+     * @return подзадача.
+     */
+    public SubTask getSubTaskById(int subTaskId) {
+        return this.subTasks.get(subTaskId);
+    }
+
+    /**
      * Получить все подзадачи эпика.
+     *
      * @return коллекция подзадач.
      */
     public ArrayList<SubTask> getAllSubTasks() {
@@ -64,9 +91,14 @@ public final class Epic extends Task {
      * @param subTask подзадача.
      */
     public void updateSubTask(SubTask subTask) {
-        if (subTask == null) throw new IllegalArgumentException("Parameter subTask can't be null");
+        if (subTask == null) {
+            throw new IllegalArgumentException("Parameter subTask can't be null");
+        }
 
-        subTask.setEpic(this);
+        if (!this.subTasks.containsKey(subTask.getId())) {
+            throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " не найдена");
+        }
+
         this.subTasks.put(subTask.getId(), subTask);
     }
 
@@ -76,7 +108,13 @@ public final class Epic extends Task {
      * @param subTask подзадача.
      */
     public void removeSubTask(SubTask subTask) {
-        if (subTask == null) throw new IllegalArgumentException("Parameter subTask can't be null");
+        if (subTask == null) {
+            throw new IllegalArgumentException("Parameter subTask can't be null");
+        }
+
+        if (!this.subTasks.containsKey(subTask.getId())) {
+            throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " не найдена");
+        }
 
         this.subTasks.remove(subTask.getId());
     }
@@ -120,8 +158,23 @@ public final class Epic extends Task {
         }
     }
 
+    // region Overrides of java.lang.Object
+
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + ", " + "sub_task_count: " + this.subTasks.size() + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", "
+                + "description: " + this.description + ", " + "status: " + this.status.name() + ", "
+                + "sub_task_count: " + this.subTasks.size() + "}";
     }
+
+    // region Implements of Cloneable
+
+    @Override
+    public Epic clone() {
+        return new Epic(this.id, this.name, this.description, this.status, this.subTasks);
+    }
+
+    // endregion
+
+    // endregion
 }
