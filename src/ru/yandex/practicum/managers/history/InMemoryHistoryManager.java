@@ -49,6 +49,6 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
      * @return список элементов, составляющих историю.
      */
     public List<T> getHistory() {
-        return this.history;
+        return new ArrayList<>(this.history);
     }
 }
