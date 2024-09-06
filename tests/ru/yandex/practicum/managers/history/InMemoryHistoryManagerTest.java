@@ -33,6 +33,36 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
+    public void removeTest() {
+        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
+        Assertions.assertEquals(0, historyManager.getHistory().size());
+
+        historyManager.add(1);
+        historyManager.add(2);
+        historyManager.add(3);
+
+        historyManager.remove(2);
+
+        Assertions.assertEquals(2, historyManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(1, 3).toArray(), historyManager.getHistory().toArray());
+    }
+
+    @Test
+    public void removeUnknownTest() {
+        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
+        Assertions.assertEquals(0, historyManager.getHistory().size());
+
+        historyManager.add(1);
+        historyManager.add(2);
+        historyManager.add(3);
+
+        historyManager.remove(5);
+
+        Assertions.assertEquals(3, historyManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(1, 2, 3).toArray(), historyManager.getHistory().toArray());
+    }
+
+    @Test
     public void getHistoryTest() {
         HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
         Assertions.assertEquals(0, historyManager.getHistory().size());

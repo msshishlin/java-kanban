@@ -38,6 +38,18 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     }
 
     /**
+     * Удалить элемент из истории.
+     * @param item элемент истории.
+     */
+    public void remove(T item) {
+        if (item == null) {
+            return;
+        }
+
+        this.history.remove(item);
+    }
+
+    /**
      * Получить историю.
      * @return список элементов, составляющих историю.
      */

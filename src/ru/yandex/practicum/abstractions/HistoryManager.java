@@ -14,6 +14,12 @@ public interface HistoryManager<T> {
     void add(T item);
 
     /**
+     * Удалить элемент из истории.
+     * @param item элемент истории.
+     */
+    void remove(T item);
+
+    /**
      * Получить историю.
      * @return список элементов, отражающий историю.
      */
