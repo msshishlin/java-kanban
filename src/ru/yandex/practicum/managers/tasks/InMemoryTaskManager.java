@@ -44,7 +44,7 @@ public final class InMemoryTaskManager implements TaskManager {
         this.subTasks = new HashMap<>();
         this.epics = new HashMap<>();
 
-        this.historyManager = new InMemoryHistoryManager<>(10);
+        this.historyManager = new InMemoryHistoryManager<>();
     }
 
     //region Задачи

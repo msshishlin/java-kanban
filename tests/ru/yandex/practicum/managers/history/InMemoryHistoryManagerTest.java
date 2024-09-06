@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class InMemoryHistoryManagerTest {
     @Test
     public void addTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>(10);
+        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
         historyManager.add(1);
 
         Assertions.assertEquals(1, historyManager.getHistory().size());
@@ -21,19 +21,19 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void addOverSizeTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>(3);
+        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
 
         for (int i = 0; i < 5; i++) {
             historyManager.add(i);
         }
 
-        Assertions.assertEquals(3, historyManager.getHistory().size());
-        Assertions.assertArrayEquals(Arrays.asList(2, 3, 4).toArray(), historyManager.getHistory().toArray());
+        Assertions.assertEquals(5, historyManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(0, 1, 2, 3, 4).toArray(), historyManager.getHistory().toArray());
     }
 
     @Test
     public void getHistoryTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>(10);
+        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
         Assertions.assertEquals(0, historyManager.getHistory().size());
 
         historyManager.add(1);

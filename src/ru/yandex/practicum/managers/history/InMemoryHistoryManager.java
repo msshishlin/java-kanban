@@ -11,11 +11,6 @@ import java.util.List;
 
 public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     /**
-     * Максимальное количество элементов в истории.
-     */
-    private final int historyMaxLength;
-
-    /**
      * История.
      */
     public final List<T> history;
@@ -23,8 +18,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     /**
      * Конструктор.
      */
-    public InMemoryHistoryManager(int historyMaxLength) {
-        this.historyMaxLength = historyMaxLength;
+    public InMemoryHistoryManager() {
         this.history = new ArrayList<>();
     }
 
@@ -35,10 +29,6 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     public void add(T item) {
         if (item == null) {
             return;
-        }
-
-        if (this.history.size() == historyMaxLength) {
-            this.history.removeFirst();
         }
 
         this.history.add(item);
