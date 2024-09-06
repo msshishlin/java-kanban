@@ -14,19 +14,19 @@ import java.util.List;
 public class InMemoryHistoryManagerTest {
     @Test
     public void addTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
-        historyManager.add(1);
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
+        historyManager.add(1, 1);
 
         Assertions.assertEquals(1, historyManager.getHistory().size());
     }
 
     @Test
     public void addDuplicateTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
         Assertions.assertEquals(0, historyManager.getHistory().size());
 
-        historyManager.add(1);
-        historyManager.add(1);
+        historyManager.add(1, 1);
+        historyManager.add(1, 1);
 
         Assertions.assertEquals(1, historyManager.getHistory().size());
         Assertions.assertArrayEquals(List.of(1).toArray(), historyManager.getHistory().toArray());
@@ -34,12 +34,12 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void removeTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
         Assertions.assertEquals(0, historyManager.getHistory().size());
 
-        historyManager.add(1);
-        historyManager.add(2);
-        historyManager.add(3);
+        historyManager.add(1, 1);
+        historyManager.add(2, 2);
+        historyManager.add(3, 3);
 
         historyManager.remove(2);
 
@@ -49,12 +49,12 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void removeUnknownTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
         Assertions.assertEquals(0, historyManager.getHistory().size());
 
-        historyManager.add(1);
-        historyManager.add(2);
-        historyManager.add(3);
+        historyManager.add(1, 1);
+        historyManager.add(2, 2);
+        historyManager.add(3, 3);
 
         historyManager.remove(5);
 
@@ -64,12 +64,12 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void getHistoryTest() {
-        HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
         Assertions.assertEquals(0, historyManager.getHistory().size());
 
-        historyManager.add(1);
-        historyManager.add(2);
-        historyManager.add(3);
+        historyManager.add(1, 1);
+        historyManager.add(2, 2);
+        historyManager.add(3, 3);
 
         Assertions.assertEquals(3, historyManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(1, 2, 3).toArray(), historyManager.getHistory().toArray());

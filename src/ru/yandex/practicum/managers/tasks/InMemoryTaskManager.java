@@ -34,7 +34,7 @@ public final class InMemoryTaskManager implements TaskManager {
     /**
      * История просмотра задач.
      */
-    private final HistoryManager<Task> historyManager;
+    private final HistoryManager<Integer, Task> historyManager;
 
     /**
      * Конструктор.
@@ -79,7 +79,7 @@ public final class InMemoryTaskManager implements TaskManager {
     public Task getTaskById(int taskId) {
         Task task = this.tasks.get(taskId);
 
-        this.historyManager.add(task);
+        this.historyManager.add(taskId, task);
 
         return task;
     }
@@ -172,7 +172,7 @@ public final class InMemoryTaskManager implements TaskManager {
     public SubTask getSubTaskById(int subTaskId) {
         SubTask subtask = this.subTasks.get(subTaskId);
 
-        this.historyManager.add(subtask);
+        this.historyManager.add(subTaskId, subtask);
 
         return subtask;
     }
@@ -291,7 +291,7 @@ public final class InMemoryTaskManager implements TaskManager {
     public Epic getEpicById(int epicId) {
         Epic epic = this.epics.get(epicId);
 
-        this.historyManager.add(epic);
+        this.historyManager.add(epicId, epic);
 
         return epic;
     }
