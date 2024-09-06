@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.abstractions.HistoryManager;
 
 import java.util.Arrays;
+import java.util.List;
 
 // endregion
 
@@ -20,15 +21,15 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void addOverSizeTest() {
+    public void addDuplicateTest() {
         HistoryManager<Integer> historyManager = new InMemoryHistoryManager<>();
+        Assertions.assertEquals(0, historyManager.getHistory().size());
 
-        for (int i = 0; i < 5; i++) {
-            historyManager.add(i);
-        }
+        historyManager.add(1);
+        historyManager.add(1);
 
-        Assertions.assertEquals(5, historyManager.getHistory().size());
-        Assertions.assertArrayEquals(Arrays.asList(0, 1, 2, 3, 4).toArray(), historyManager.getHistory().toArray());
+        Assertions.assertEquals(1, historyManager.getHistory().size());
+        Assertions.assertArrayEquals(List.of(1).toArray(), historyManager.getHistory().toArray());
     }
 
     @Test
@@ -37,10 +38,10 @@ public class InMemoryHistoryManagerTest {
         Assertions.assertEquals(0, historyManager.getHistory().size());
 
         historyManager.add(1);
-        historyManager.add(1);
-        historyManager.add(1);
+        historyManager.add(2);
+        historyManager.add(3);
 
         Assertions.assertEquals(3, historyManager.getHistory().size());
-        Assertions.assertArrayEquals(Arrays.asList(1, 1, 1).toArray(), historyManager.getHistory().toArray());
+        Assertions.assertArrayEquals(Arrays.asList(1, 2, 3).toArray(), historyManager.getHistory().toArray());
     }
 }

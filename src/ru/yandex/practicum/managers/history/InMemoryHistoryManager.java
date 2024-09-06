@@ -5,7 +5,9 @@ package ru.yandex.practicum.managers.history;
 import ru.yandex.practicum.abstractions.HistoryManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 // endregion
 
@@ -13,13 +15,13 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
     /**
      * История.
      */
-    public final List<T> history;
+    public final Set<T> history;
 
     /**
      * Конструктор.
      */
     public InMemoryHistoryManager() {
-        this.history = new ArrayList<>();
+        this.history = new HashSet<>();
     }
 
     /**
@@ -31,6 +33,7 @@ public class InMemoryHistoryManager<T> implements HistoryManager<T> {
             return;
         }
 
+        this.history.remove(item);
         this.history.add(item);
     }
 
