@@ -7,6 +7,7 @@ import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // endregion
 
@@ -153,4 +154,14 @@ public interface TaskManager {
     void removeAllEpics();
 
     //endregion
+
+    // region История просмотра
+
+    /**
+     * Получить историю просмотра задач.
+     * @return история просмотра задач.
+     */
+    List<Task> getHistory();
+
+    // endregion
 }

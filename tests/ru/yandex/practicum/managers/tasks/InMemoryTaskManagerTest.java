@@ -12,6 +12,7 @@ import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
 
 import java.util.Arrays;
+import java.util.List;
 
 // endregion
 
@@ -533,5 +534,76 @@ public class InMemoryTaskManagerTest {
 
         Assertions.assertEquals(0, this.taskManager.getAllSubTasks().size());
         Assertions.assertEquals(0, this.taskManager.getAllEpics().size());
+    }
+
+    @Test
+    public void getHistoryTest() {
+        Task task1 = new Task("Задача №1", "Описание задачи №1");
+        taskManager.createTask(task1);
+        taskManager.getTaskById(task1.getId());
+
+        Assertions.assertEquals(1, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(List.of(task1).toArray(), this.taskManager.getHistory().toArray());
+
+        Task task2 = new Task("Задача №2", "Описание задачи №2");
+        taskManager.createTask(task2);
+        taskManager.getTaskById(task2.getId());
+
+        Assertions.assertEquals(2, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task1, task2).toArray(), this.taskManager.getHistory().toArray());
+
+        taskManager.getTaskById(task1.getId());
+
+        Assertions.assertEquals(2, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task2, task1).toArray(), this.taskManager.getHistory().toArray());
+
+        taskManager.removeTaskById(task2.getId());
+
+        Assertions.assertEquals(1, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(List.of(task1).toArray(), this.taskManager.getHistory().toArray());
+
+        Epic epic1 = new Epic("Эпик №1", "Описание эпика № 1");
+        taskManager.createEpic(epic1);
+        taskManager.getEpicById(epic1.getId());
+
+        Assertions.assertEquals(2, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task1, epic1).toArray(), this.taskManager.getHistory().toArray());
+
+        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", epic1);
+        epic1.addSubTask(subTask1);
+        taskManager.createSubTask(subTask1);
+        taskManager.getSubTaskById(subTask1.getId());
+
+        Assertions.assertEquals(3, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task1, epic1, subTask1).toArray(), this.taskManager.getHistory().toArray());
+
+        taskManager.getEpicById(epic1.getId());
+
+        Assertions.assertEquals(3, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1).toArray(), this.taskManager.getHistory().toArray());
+
+        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", epic1);
+        epic1.addSubTask(subTask2);
+        taskManager.createSubTask(subTask2);
+        taskManager.getSubTaskById(subTask2.getId());
+
+        Assertions.assertEquals(4, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1, subTask2).toArray(), this.taskManager.getHistory().toArray());
+
+        Epic epic2 = new Epic("Эпик №2", "Описание эпика № 2");
+        taskManager.createEpic(epic2);
+
+        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", epic2);
+        epic2.addSubTask(subTask3);
+        taskManager.createSubTask(subTask3);
+        taskManager.getSubTaskById(subTask3.getId());
+
+        Assertions.assertEquals(5, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1, subTask2, subTask3).toArray(), this.taskManager.getHistory().toArray());
+
+        taskManager.removeEpicById(epic1.getId());
+
+        Assertions.assertEquals(2, this.taskManager.getHistory().size());
+        Assertions.assertArrayEquals(Arrays.asList(task1, subTask3).toArray(), this.taskManager.getHistory().toArray());
     }
 }

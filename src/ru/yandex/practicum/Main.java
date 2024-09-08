@@ -2,7 +2,6 @@ package ru.yandex.practicum;
 
 // region imports
 
-import ru.yandex.practicum.constants.TaskStatus;
 import ru.yandex.practicum.managers.tasks.InMemoryTaskManager;
 import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
@@ -20,7 +19,7 @@ public class Main {
         taskManager.createTask(task1);
         taskManager.createTask(task2);
 
-        Epic epic1 = new Epic("Эпик №1", "Описание эпика №1");
+        Epic epic1 = new Epic("Эпик №1", "Эпик с 3 подзадачами");
         taskManager.createEpic(epic1);
 
         SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", epic1);
@@ -31,80 +30,48 @@ public class Main {
         epic1.addSubTask(subTask2);
         taskManager.createSubTask(subTask2);
 
-        Epic epic2 = new Epic("Эпик №2", "Описание эпика №2");
-        taskManager.createEpic(epic2);
-
-        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", epic2);
-        epic2.addSubTask(subTask3);
+        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", epic1);
+        epic1.addSubTask(subTask3);
         taskManager.createSubTask(subTask3);
 
-        System.out.println("========== Списки до изменений ========== ");
-        System.out.println();
+        Epic epic2 = new Epic("Эпик №2", "Эпик без подзадач");
+        taskManager.createEpic(epic2);
 
-        printAll();
+        System.out.println("Выводим список задач в порядке создания:");
+        System.out.println(taskManager.getTaskById(task1.getId()));
+        System.out.println(taskManager.getTaskById(task2.getId()));
+        System.out.println(taskManager.getEpicById(epic1.getId()));
+        System.out.println(taskManager.getSubTaskById(subTask1.getId()));
+        System.out.println(taskManager.getSubTaskById(subTask2.getId()));
+        System.out.println(taskManager.getSubTaskById(subTask3.getId()));
+        System.out.println(taskManager.getEpicById(epic2.getId()));
 
-        Task task1Copy = task1.clone();
-        task1Copy.setStatus(TaskStatus.IN_PROGRESS);
-        taskManager.updateTask(task1Copy);
+        System.out.println("Выводим подзадачи первого эпика:");
+        System.out.println(taskManager.getSubTaskById(subTask1.getId()));
+        System.out.println(taskManager.getSubTaskById(subTask2.getId()));
+        System.out.println(taskManager.getSubTaskById(subTask3.getId()));
 
-        SubTask subTask1Copy = subTask1.clone();
-        subTask1Copy.setStatus(TaskStatus.IN_PROGRESS);
-        taskManager.updateSubTask(subTask1Copy);
+        System.out.println("Выводим эпики:");
+        System.out.println(taskManager.getEpicById(epic1.getId()));
+        System.out.println(taskManager.getEpicById(epic2.getId()));
 
-        SubTask subTask3Copy = subTask3.clone();
-        subTask3Copy.setStatus(TaskStatus.DONE);
-        taskManager.updateSubTask(subTask3Copy);
+        System.out.println("Выводим задачи");
+        System.out.println(taskManager.getTaskById(task1.getId()));
+        System.out.println(taskManager.getTaskById(task2.getId()));
 
-        System.out.println("========== Списки после изменений ========== ");
-        System.out.println();
+        System.out.println("Проверяем историю просмотров:");
+        System.out.println(taskManager.getHistory());
 
-        printAll();
+        System.out.println("Удаляем задачу №1");
+        taskManager.removeTaskById(task1.getId());
 
-        taskManager.removeTaskById(task2.getId());
-        taskManager.removeEpicById(epic2.getId());
+        System.out.println("Проверяем историю просмотров:");
+        System.out.println(taskManager.getHistory());
 
-        System.out.println("========== Списки после удалений ========== ");
-        System.out.println();
+        System.out.println("Удаляем эпик №1");
+        taskManager.removeEpicById(epic1.getId());
 
-        printAll();
-
-        taskManager.removeAllTasks();
-        taskManager.removeAllSubTasks();
-        taskManager.removeAllEpics();
-
-        System.out.println("========== Списки после зачистки ========== ");
-        System.out.println();
-
-        printAll();
-    }
-
-    private static void printAll() {
-        printAllTasks();
-        printAllSubTasks();
-        printAllEpics();
-    }
-
-    private static void printAllTasks() {
-        System.out.println("Список задач:");
-        for (Task task : taskManager.getAllTasks()) {
-            System.out.println(task);
-        }
-        System.out.println();
-    }
-
-    private static void printAllSubTasks() {
-        System.out.println("Список подзадач:");
-        for (SubTask subTask : taskManager.getAllSubTasks()) {
-            System.out.println(subTask);
-        }
-        System.out.println();
-    }
-
-    private static void printAllEpics() {
-        System.out.println("Список эпиков:");
-        for (Epic epic : taskManager.getAllEpics()) {
-            System.out.println(epic);
-        }
-        System.out.println();
+        System.out.println("Проверяем историю просмотров:");
+        System.out.println(taskManager.getHistory());
     }
 }
