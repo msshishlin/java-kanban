@@ -79,7 +79,9 @@ public final class InMemoryTaskManager implements TaskManager {
     public Task getTaskById(int taskId) {
         Task task = this.tasks.get(taskId);
 
-        this.historyManager.add(taskId, task);
+        if (task != null) {
+            this.historyManager.add(taskId, task);
+        }
 
         return task;
     }
@@ -170,11 +172,13 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return подзадача.
      */
     public SubTask getSubTaskById(int subTaskId) {
-        SubTask subtask = this.subTasks.get(subTaskId);
+        SubTask subTask = this.subTasks.get(subTaskId);
 
-        this.historyManager.add(subTaskId, subtask);
+        if (subTask != null) {
+            this.historyManager.add(subTaskId, subTask);
+        }
 
-        return subtask;
+        return subTask;
     }
 
     /**
@@ -291,7 +295,9 @@ public final class InMemoryTaskManager implements TaskManager {
     public Epic getEpicById(int epicId) {
         Epic epic = this.epics.get(epicId);
 
-        this.historyManager.add(epicId, epic);
+        if (epic != null) {
+            this.historyManager.add(epicId, epic);
+        }
 
         return epic;
     }

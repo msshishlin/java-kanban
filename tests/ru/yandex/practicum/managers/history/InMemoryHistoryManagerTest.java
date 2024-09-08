@@ -21,15 +21,41 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
+    public void addWithNullTest() {
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> historyManager.add(null, null));
+    }
+
+    @Test
+    public void addWithNullKeyTest() {
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> historyManager.add(null, 1));
+    }
+
+    @Test
+    public void addWithNullValueTest() {
+        HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> historyManager.add(1, null));
+    }
+
+    @Test
     public void addDuplicateTest() {
         HistoryManager<Integer, Integer> historyManager = new InMemoryHistoryManager<>();
         Assertions.assertEquals(0, historyManager.getHistory().size());
 
         historyManager.add(1, 1);
+        historyManager.add(2, 2);
+        historyManager.add(2, 2);
+        historyManager.add(3, 3);
         historyManager.add(1, 1);
+        historyManager.add(3, 3);
 
-        Assertions.assertEquals(1, historyManager.getHistory().size());
-        Assertions.assertArrayEquals(List.of(1).toArray(), historyManager.getHistory().toArray());
+
+        Assertions.assertEquals(3, historyManager.getHistory().size());
+        Assertions.assertArrayEquals(List.of(2, 1, 3).toArray(), historyManager.getHistory().toArray());
     }
 
     @Test
