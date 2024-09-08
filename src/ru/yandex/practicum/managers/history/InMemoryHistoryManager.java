@@ -72,7 +72,7 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
         // Иначе получаем этот элемент из истории
         Node<TValue> element = this.history.get(key);
 
-        // Если элемент, который мы пытаемся добавить повторно уже итак последний - просто выходим.
+        // Если элемент, который мы пытаемся добавить повторно уже, итак, последний - просто выходим.
         if (element.equals(this.last)) {
             return;
         }
@@ -88,7 +88,7 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
         if (next != null) {
             next.previous = element.previous;
 
-            // Если предыущего элемента нет, значит следующий - это новый первый элемент.
+            // Если предыдущего элемента нет, значит следующий - это новый первый элемент.
             if (next.previous == null) {
                 this.first = next;
             }
