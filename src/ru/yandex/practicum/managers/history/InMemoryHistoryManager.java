@@ -11,21 +11,21 @@ import java.util.Map;
 
 // endregion
 
-public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey, TValue> {
+public class InMemoryHistoryManager<K, V> implements HistoryManager<K, V> {
     /**
      * История.
      */
-    private final Map<TKey, Node<TValue>> history;
+    private final Map<K, Node<V>> history;
 
     /**
      * Первый элемент в истории.
      */
-    private Node<TValue> first;
+    private Node<V> first;
 
     /**
      * Последний элемент в истории.
      */
-    private Node<TValue> last;
+    private Node<V> last;
 
     /**
      * Конструктор.
@@ -39,7 +39,7 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
      * @param key ключ элемента истории.
      * @param value значение элемента истории.
      */
-    public void add(TKey key, TValue value) {
+    public void add(K key, V value) {
         if (key == null) {
             throw new IllegalArgumentException("Parameter 'key' can't be null");
         }
@@ -50,7 +50,7 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
 
         // Если история пустая, просто создаем новый элемент. Он будет одновременно и первым и последним.
         if (this.history.isEmpty()) {
-            Node<TValue> element = new Node<>(null, value, null);
+            Node<V> element = new Node<>(null, value, null);
 
             this.first = element;
             this.last = element;
@@ -61,7 +61,7 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
 
         // Если история ещё не содержит данный элемент.
         if (!this.history.containsKey(key)) {
-            Node<TValue> element = new Node<>(this.last, value, null);
+            Node<V> element = new Node<>(this.last, value, null);
             this.last.next = element;
             this.last = element;
 
@@ -70,7 +70,7 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
         }
 
         // Иначе получаем этот элемент из истории
-        Node<TValue> element = this.history.get(key);
+        Node<V> element = this.history.get(key);
 
         // Если элемент, который мы пытаемся добавить повторно уже, итак, последний - просто выходим.
         if (element.equals(this.last)) {
@@ -78,13 +78,13 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
         }
 
         // Связываем предыдущий элемент со следующим.
-        Node<TValue> previous = element.previous;
+        Node<V> previous = element.previous;
         if (previous != null) {
             previous.next = element.next;
         }
 
         // Связываем следующий элемент с предыдущим.
-        Node<TValue> next = element.next;
+        Node<V> next = element.next;
         if (next != null) {
             next.previous = element.previous;
 
@@ -107,19 +107,19 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
      * Удалить элемент из истории.
      * @param key ключ элемента истории.
      */
-    public void remove(TKey key) {
+    public void remove(K key) {
         if (key == null || !this.history.containsKey(key)) {
             return;
         }
 
-        Node<TValue> element = this.history.get(key);
+        Node<V> element = this.history.get(key);
 
-        Node<TValue> previous = element.previous;
+        Node<V> previous = element.previous;
         if (previous != null) {
             previous.next = element.next;
         }
 
-        Node<TValue> next = element.next;
+        Node<V> next = element.next;
         if (next != null) {
             next.previous = element.previous;
         }
@@ -141,10 +141,10 @@ public class InMemoryHistoryManager<TKey, TValue> implements HistoryManager<TKey
      * Получить историю.
      * @return список элементов, составляющих историю.
      */
-    public List<TValue> getHistory() {
-        List<TValue> result = new ArrayList<>();
+    public List<V> getHistory() {
+        List<V> result = new ArrayList<>();
 
-        Node<TValue> element = this.first;
+        Node<V> element = this.first;
 
         while (element != null) {
             result.add(element.data);
