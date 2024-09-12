@@ -15,7 +15,7 @@ public class Managers {
         return new InMemoryTaskManager();
     }
 
-    public static HistoryManager<Task> getDefaultHistory() {
-        return new InMemoryHistoryManager<>(10);
+    public static HistoryManager<Integer, Task> getDefaultHistory() {
+        return new InMemoryHistoryManager<>();
     }
 }

@@ -12,6 +12,7 @@ import ru.yandex.practicum.models.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 // endregion
 
@@ -34,7 +35,7 @@ public final class InMemoryTaskManager implements TaskManager {
     /**
      * История просмотра задач.
      */
-    private final HistoryManager<Task> historyManager;
+    private final HistoryManager<Integer, Task> historyManager;
 
     /**
      * Конструктор.
@@ -44,7 +45,7 @@ public final class InMemoryTaskManager implements TaskManager {
         this.subTasks = new HashMap<>();
         this.epics = new HashMap<>();
 
-        this.historyManager = new InMemoryHistoryManager<>(10);
+        this.historyManager = new InMemoryHistoryManager<>();
     }
 
     //region Задачи
@@ -79,7 +80,9 @@ public final class InMemoryTaskManager implements TaskManager {
     public Task getTaskById(int taskId) {
         Task task = this.tasks.get(taskId);
 
-        this.historyManager.add(task);
+        if (task != null) {
+            this.historyManager.add(taskId, task);
+        }
 
         return task;
     }
@@ -120,6 +123,7 @@ public final class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Задача с идентификатором " + taskId + " не найдена");
         }
 
+        this.historyManager.remove(taskId);
         this.tasks.remove(taskId);
     }
 
@@ -127,6 +131,10 @@ public final class InMemoryTaskManager implements TaskManager {
      * Удалить все задачи.
      */
     public void removeAllTasks() {
+        for (Integer taskId : this.tasks.keySet()) {
+            this.historyManager.remove(taskId);
+        }
+
         this.tasks.clear();
     }
 
@@ -170,11 +178,13 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return подзадача.
      */
     public SubTask getSubTaskById(int subTaskId) {
-        SubTask subtask = this.subTasks.get(subTaskId);
+        SubTask subTask = this.subTasks.get(subTaskId);
 
-        this.historyManager.add(subtask);
+        if (subTask != null) {
+            this.historyManager.add(subTaskId, subTask);
+        }
 
-        return subtask;
+        return subTask;
     }
 
     /**
@@ -239,6 +249,7 @@ public final class InMemoryTaskManager implements TaskManager {
         subTask.getEpic().removeSubTask(subTask);
         subTask.getEpic().updateStatus();
 
+        this.historyManager.remove(subTaskId);
         this.subTasks.remove(subTaskId);
     }
 
@@ -248,10 +259,11 @@ public final class InMemoryTaskManager implements TaskManager {
     public void removeAllSubTasks() {
         for (SubTask subTask : this.subTasks.values()) {
             Epic epic = subTask.getEpic();
-            if (epic != null) {
-                epic.removeSubTask(subTask);
-                epic.updateStatus();
-            }
+
+            epic.removeSubTask(subTask);
+            epic.updateStatus();
+
+            this.historyManager.remove(subTask.getId());
         }
 
         this.subTasks.clear();
@@ -291,7 +303,9 @@ public final class InMemoryTaskManager implements TaskManager {
     public Epic getEpicById(int epicId) {
         Epic epic = this.epics.get(epicId);
 
-        this.historyManager.add(epic);
+        if (epic != null) {
+            this.historyManager.add(epicId, epic);
+        }
 
         return epic;
     }
@@ -335,10 +349,13 @@ public final class InMemoryTaskManager implements TaskManager {
         Epic epic = this.epics.get(epicId);
 
         for (SubTask subTask : epic.getAllSubTasks()) {
+            this.historyManager.remove(subTask.getId());
             this.subTasks.remove(subTask.getId());
         }
 
         epic.removeAllSubTasks();
+
+        this.historyManager.remove(epicId);
         this.epics.remove(epicId);
     }
 
@@ -346,9 +363,30 @@ public final class InMemoryTaskManager implements TaskManager {
      * Удалить все эпики.
      */
     public void removeAllEpics() {
+        for (Integer subTaskId : this.subTasks.keySet()) {
+            this.historyManager.remove(subTaskId);
+        }
+
         this.subTasks.clear();
+
+        for (Integer epicId : this.epics.keySet()) {
+            this.historyManager.remove(epicId);
+        }
+
         this.epics.clear();
     }
 
     //endregion
+
+    // region История просмотра
+
+    /**
+     * Получить историю просмотра задач.
+     * @return история просмотра задач.
+     */
+    public List<Task> getHistory() {
+        return this.historyManager.getHistory();
+    }
+
+    // endregion
 }

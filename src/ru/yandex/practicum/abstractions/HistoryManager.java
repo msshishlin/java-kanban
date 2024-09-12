@@ -6,16 +6,23 @@ import java.util.List;
 
 // endregion
 
-public interface HistoryManager<T> {
+public interface HistoryManager<K, V> {
     /**
      * Добавить элемент в историю.
-     * @param item элемент истории.
+     * @param key ключ элемента истории.
+     * @param value значение элемента истории.
      */
-    void add(T item);
+    void add(K key, V value);
+
+    /**
+     * Удалить элемент из истории.
+     * @param key ключ элемента истории.
+     */
+    void remove(K key);
 
     /**
      * Получить историю.
      * @return список элементов, отражающий историю.
      */
-    List<T> getHistory();
+    List<V> getHistory();
 }
