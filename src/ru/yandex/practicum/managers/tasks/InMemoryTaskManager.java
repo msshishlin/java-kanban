@@ -12,11 +12,12 @@ import ru.yandex.practicum.models.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 // endregion
 
-public final class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     /**
      * Список задач.
      */
@@ -41,9 +42,9 @@ public final class InMemoryTaskManager implements TaskManager {
      * Конструктор.
      */
     public InMemoryTaskManager() {
-        this.tasks = new HashMap<>();
-        this.subTasks = new HashMap<>();
-        this.epics = new HashMap<>();
+        this.tasks = new LinkedHashMap<>();
+        this.subTasks = new LinkedHashMap<>();
+        this.epics = new LinkedHashMap<>();
 
         this.historyManager = new InMemoryHistoryManager<>();
     }
@@ -382,6 +383,7 @@ public final class InMemoryTaskManager implements TaskManager {
 
     /**
      * Получить историю просмотра задач.
+     *
      * @return история просмотра задач.
      */
     public List<Task> getHistory() {

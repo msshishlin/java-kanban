@@ -3,6 +3,7 @@ package ru.yandex.practicum.models;
 //region imports
 
 import ru.yandex.practicum.constants.TaskStatus;
+import ru.yandex.practicum.constants.TaskType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public final class Epic extends Task {
      * @param status      статус задачи.
      * @param subTasks    коллекция подзадач.
      */
-    private Epic(int id, String name, String description, TaskStatus status, HashMap<Integer, SubTask> subTasks) {
+    public Epic(int id, String name, String description, TaskStatus status, HashMap<Integer, SubTask> subTasks) {
         super(id, name, description, status);
 
         this.subTasks = subTasks;
@@ -158,13 +159,25 @@ public final class Epic extends Task {
         }
     }
 
+    // region Overrides of ru.yandex.practicum.models.Task
+
+    /**
+     * Преобразовать объект эпика в строку в формате CSV.
+     *
+     * @return объект эпика в виде строки в формате CSV.
+     */
+    @Override
+    public String toCsvString() {
+        return String.join(",", String.valueOf(this.id), TaskType.EPIC.name(), this.name, this.status.name(), this.description);
+    }
+
+    // endregion
+
     // region Overrides of java.lang.Object
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", "
-                + "description: " + this.description + ", " + "status: " + this.status.name() + ", "
-                + "sub_task_count: " + this.subTasks.size() + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + ", " + "sub_task_count: " + this.subTasks.size() + "}";
     }
 
     // region Implements of Cloneable
