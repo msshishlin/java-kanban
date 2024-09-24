@@ -95,7 +95,7 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerLoadException();
+            throw new ManagerLoadException("Ошибка при загрузке данных из файла: " + storage.getName(), e);
         }
     }
 
@@ -116,7 +116,7 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                 fileWriter.write(String.format("%s%n", task.toCsvString()));
             }
         } catch (IOException e) {
-            throw new ManagerSaveException();
+            throw new ManagerSaveException("Ошибка при сохранении данных в файл: " + this.storage.getName(), e);
         }
     }
 
