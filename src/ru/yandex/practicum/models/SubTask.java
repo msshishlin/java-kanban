@@ -60,6 +60,16 @@ public final class SubTask extends Task {
     }
 
     /**
+     * Клонировать подзадачу.
+     *
+     * @param subTask подзадача.
+     * @return клон подзадачи.
+     */
+    public static SubTask clone(SubTask subTask) {
+        return new SubTask(subTask.id, subTask.name, subTask.description, subTask.status, subTask.startTime, subTask.duration, subTask.epic);
+    }
+
+    /**
      * Получить эпик.
      *
      * @return эпик.
@@ -88,15 +98,6 @@ public final class SubTask extends Task {
     public String toString() {
         return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", name: " + this.name + ", description: " + this.description + ", status: " + this.status.name() + ", startTime: " + this.startTime + ", duration: " + this.duration + ", epic: " + this.epic + "}";
     }
-
-    // region Implements of Cloneable
-
-    @Override
-    public SubTask clone() {
-        return new SubTask(this.id, this.name, this.description, this.status, this.startTime, this.duration, this.epic);
-    }
-
-    // endregion
 
     // endregion
 }

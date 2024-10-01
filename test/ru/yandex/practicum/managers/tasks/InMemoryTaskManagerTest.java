@@ -95,7 +95,7 @@ public final class InMemoryTaskManagerTest {
         Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
-        Task taskClone = task.clone();
+        Task taskClone = Task.clone(task);
         taskClone.setStatus(TaskStatus.IN_PROGRESS);
 
         this.taskManager.updateTask(taskClone);
@@ -317,7 +317,7 @@ public final class InMemoryTaskManagerTest {
 
         this.taskManager.createSubTask(subTask);
 
-        SubTask subTaskClone = subTask.clone();
+        SubTask subTaskClone = SubTask.clone(subTask);
         subTaskClone.setStatus(TaskStatus.IN_PROGRESS);
 
         this.taskManager.updateSubTask(subTaskClone);
@@ -420,22 +420,6 @@ public final class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void createEpicWithInProgressStatusTest() {
-        Epic epic = new Epic("Эпик", "Описание эпика");
-        epic.setStatus(TaskStatus.IN_PROGRESS);
-
-        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createEpic(epic));
-    }
-
-    @Test
-    public void createEpicWithDoneStatusTest() {
-        Epic epic = new Epic("Эпик", "Описание эпика");
-        epic.setStatus(TaskStatus.DONE);
-
-        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createEpic(epic));
-    }
-
-    @Test
     public void getEpicByIdTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
@@ -467,7 +451,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        Epic epicClone = epic.clone();
+        Epic epicClone = Epic.clone(epic);
         this.taskManager.updateEpic(epicClone);
     }
 

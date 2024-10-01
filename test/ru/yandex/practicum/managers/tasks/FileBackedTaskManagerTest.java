@@ -96,9 +96,7 @@ public final class FileBackedTaskManagerTest {
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
         Assertions.assertEquals(1, this.taskManager.getAllTasks().size());
-        Assertions.assertTrue(task.getStartTime().isPresent());
-        Assertions.assertTrue(task.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(task.getId()), TaskType.TASK.toString(), task.getName(), task.getStatus().toString(), task.getDescription(), task.getStartTime().get().toString(), task.getDuration().get().toString()), lines.getFirst());
+        Assertions.assertEquals(String.join(",", String.valueOf(task.getId()), TaskType.TASK.toString(), task.getName(), task.getStatus().toString(), task.getDescription(), task.getStartTime().toString(), task.getDuration().toString()), lines.getFirst());
     }
 
     @Test
@@ -158,17 +156,9 @@ public final class FileBackedTaskManagerTest {
 
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
-        Assertions.assertTrue(task1.getStartTime().isPresent());
-        Assertions.assertTrue(task1.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.getFirst());
-
-        Assertions.assertTrue(task2.getStartTime().isPresent());
-        Assertions.assertTrue(task2.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(task2.getId()), TaskType.TASK.toString(), task2.getName(), task2.getStatus().toString(), task2.getDescription(), task2.getStartTime().get().toString(), task2.getDuration().get().toString()), lines.get(1));
-
-        Assertions.assertTrue(task3.getStartTime().isPresent());
-        Assertions.assertTrue(task3.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(task3.getId()), TaskType.TASK.toString(), task3.getName(), task3.getStatus().toString(), task3.getDescription(), task3.getStartTime().get().toString(), task3.getDuration().get().toString()), lines.get(2));
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.getFirst());
+        Assertions.assertEquals(String.join(",", String.valueOf(task2.getId()), TaskType.TASK.toString(), task2.getName(), task2.getStatus().toString(), task2.getDescription(), task2.getStartTime().toString(), task2.getDuration().toString()), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(task3.getId()), TaskType.TASK.toString(), task3.getName(), task3.getStatus().toString(), task3.getDescription(), task3.getStartTime().toString(), task3.getDuration().toString()), lines.get(2));
     }
 
     @Test
@@ -176,7 +166,7 @@ public final class FileBackedTaskManagerTest {
         Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
-        Task taskClone = task.clone();
+        Task taskClone = Task.clone(task);
         taskClone.setStatus(TaskStatus.IN_PROGRESS);
 
         this.taskManager.updateTask(taskClone);
@@ -184,9 +174,7 @@ public final class FileBackedTaskManagerTest {
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getTaskById(task.getId()).getStatus());
-        Assertions.assertTrue(taskClone.getStartTime().isPresent());
-        Assertions.assertTrue(taskClone.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(taskClone.getId()), TaskType.TASK.toString(), taskClone.getName(), taskClone.getStatus().toString(), taskClone.getDescription(), taskClone.getStartTime().get().toString(), taskClone.getDuration().get().toString()), lines.getFirst());
+        Assertions.assertEquals(String.join(",", String.valueOf(taskClone.getId()), TaskType.TASK.toString(), taskClone.getName(), taskClone.getStatus().toString(), taskClone.getDescription(), taskClone.getStartTime().toString(), taskClone.getDuration().toString()), lines.getFirst());
     }
 
     @Test
@@ -258,9 +246,7 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertTrue(epic.getStartTime().isPresent());
         Assertions.assertTrue(epic.getDuration().isPresent());
         Assertions.assertEquals(String.join(",", String.valueOf(epic.getId()), TaskType.EPIC.toString(), epic.getName(), epic.getStatus().toString(), epic.getDescription(), epic.getStartTime().get().toString(), epic.getDuration().get().toString()), lines.getFirst());
-        Assertions.assertTrue(subTask.getStartTime().isPresent());
-        Assertions.assertTrue(subTask.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask.getId()), TaskType.SUBTASK.toString(), subTask.getName(), subTask.getStatus().toString(), subTask.getDescription(), subTask.getStartTime().get().toString(), subTask.getDuration().get().toString(), String.valueOf(epic.getId())), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask.getId()), TaskType.SUBTASK.toString(), subTask.getName(), subTask.getStatus().toString(), subTask.getDescription(), subTask.getStartTime().toString(), subTask.getDuration().toString(), String.valueOf(epic.getId())), lines.get(1));
     }
 
     @Test
@@ -382,21 +368,11 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertTrue(epic2.getStartTime().isPresent());
         Assertions.assertTrue(epic2.getDuration().isPresent());
         Assertions.assertEquals(String.join(",", String.valueOf(epic2.getId()), TaskType.EPIC.toString(), epic2.getName(), epic2.getStatus().toString(), epic2.getDescription(), epic2.getStartTime().get().toString(), epic2.getDuration().get().toString()), lines.get(1));
-        Assertions.assertTrue(subTask1.getStartTime().isPresent());
-        Assertions.assertTrue(subTask1.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().get().toString(), subTask1.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(2));
-        Assertions.assertTrue(subTask2.getStartTime().isPresent());
-        Assertions.assertTrue(subTask2.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().get().toString(), subTask2.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(3));
-        Assertions.assertTrue(subTask3.getStartTime().isPresent());
-        Assertions.assertTrue(subTask3.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().get().toString(), subTask3.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(4));
-        Assertions.assertTrue(subTask4.getStartTime().isPresent());
-        Assertions.assertTrue(subTask4.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask4.getId()), TaskType.SUBTASK.toString(), subTask4.getName(), subTask4.getStatus().toString(), subTask4.getDescription(), subTask4.getStartTime().get().toString(), subTask4.getDuration().get().toString(), String.valueOf(epic2.getId())), lines.get(5));
-        Assertions.assertTrue(subTask5.getStartTime().isPresent());
-        Assertions.assertTrue(subTask5.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask5.getId()), TaskType.SUBTASK.toString(), subTask5.getName(), subTask5.getStatus().toString(), subTask5.getDescription(), subTask5.getStartTime().get().toString(), subTask5.getDuration().get().toString(), String.valueOf(epic2.getId())), lines.get(6));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().toString(), subTask1.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(2));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().toString(), subTask2.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(3));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().toString(), subTask3.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(4));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask4.getId()), TaskType.SUBTASK.toString(), subTask4.getName(), subTask4.getStatus().toString(), subTask4.getDescription(), subTask4.getStartTime().toString(), subTask4.getDuration().toString(), String.valueOf(epic2.getId())), lines.get(5));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask5.getId()), TaskType.SUBTASK.toString(), subTask5.getName(), subTask5.getStatus().toString(), subTask5.getDescription(), subTask5.getStartTime().toString(), subTask5.getDuration().toString(), String.valueOf(epic2.getId())), lines.get(6));
     }
 
     @Test
@@ -436,21 +412,11 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertTrue(epic2.getStartTime().isPresent());
         Assertions.assertTrue(epic2.getDuration().isPresent());
         Assertions.assertEquals(String.join(",", String.valueOf(epic2.getId()), TaskType.EPIC.toString(), epic2.getName(), epic2.getStatus().toString(), epic2.getDescription(), epic2.getStartTime().get().toString(), epic2.getDuration().get().toString()), lines.get(1));
-        Assertions.assertTrue(subTask1.getStartTime().isPresent());
-        Assertions.assertTrue(subTask1.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().get().toString(), subTask1.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(2));
-        Assertions.assertTrue(subTask2.getStartTime().isPresent());
-        Assertions.assertTrue(subTask2.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().get().toString(), subTask2.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(3));
-        Assertions.assertTrue(subTask3.getStartTime().isPresent());
-        Assertions.assertTrue(subTask3.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().get().toString(), subTask3.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(4));
-        Assertions.assertTrue(subTask4.getStartTime().isPresent());
-        Assertions.assertTrue(subTask4.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask4.getId()), TaskType.SUBTASK.toString(), subTask4.getName(), subTask4.getStatus().toString(), subTask4.getDescription(), subTask4.getStartTime().get().toString(), subTask4.getDuration().get().toString(), String.valueOf(epic2.getId())), lines.get(5));
-        Assertions.assertTrue(subTask5.getStartTime().isPresent());
-        Assertions.assertTrue(subTask5.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask5.getId()), TaskType.SUBTASK.toString(), subTask5.getName(), subTask5.getStatus().toString(), subTask5.getDescription(), subTask5.getStartTime().get().toString(), subTask5.getDuration().get().toString(), String.valueOf(epic2.getId())), lines.get(6));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().toString(), subTask1.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(2));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().toString(), subTask2.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(3));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().toString(), subTask3.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(4));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask4.getId()), TaskType.SUBTASK.toString(), subTask4.getName(), subTask4.getStatus().toString(), subTask4.getDescription(), subTask4.getStartTime().toString(), subTask4.getDuration().toString(), String.valueOf(epic2.getId())), lines.get(5));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask5.getId()), TaskType.SUBTASK.toString(), subTask5.getName(), subTask5.getStatus().toString(), subTask5.getDescription(), subTask5.getStartTime().toString(), subTask5.getDuration().toString(), String.valueOf(epic2.getId())), lines.get(6));
     }
 
     @Test
@@ -463,7 +429,7 @@ public final class FileBackedTaskManagerTest {
 
         this.taskManager.createSubTask(subTask);
 
-        SubTask subTaskClone = subTask.clone();
+        SubTask subTaskClone = SubTask.clone(subTask);
         subTaskClone.setStatus(TaskStatus.IN_PROGRESS);
 
         this.taskManager.updateSubTask(subTaskClone);
@@ -478,10 +444,7 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertTrue(epic.getStartTime().isPresent());
         Assertions.assertTrue(epic.getDuration().isPresent());
         Assertions.assertEquals(String.join(",", String.valueOf(epic.getId()), TaskType.EPIC.toString(), epic.getName(), epic.getStatus().toString(), epic.getDescription(), epic.getStartTime().get().toString(), epic.getDuration().get().toString()), lines.getFirst());
-
-        Assertions.assertTrue(subTaskClone.getStartTime().isPresent());
-        Assertions.assertTrue(subTaskClone.getDuration().isPresent());
-        Assertions.assertEquals(String.join(",", String.valueOf(subTaskClone.getId()), TaskType.SUBTASK.toString(), subTaskClone.getName(), subTaskClone.getStatus().toString(), subTaskClone.getDescription(), subTaskClone.getStartTime().get().toString(), subTaskClone.getDuration().get().toString(), String.valueOf(epic.getId())), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTaskClone.getId()), TaskType.SUBTASK.toString(), subTaskClone.getName(), subTaskClone.getStatus().toString(), subTaskClone.getDescription(), subTaskClone.getStartTime().toString(), subTaskClone.getDuration().toString(), String.valueOf(epic.getId())), lines.get(1));
     }
 
     @Test
@@ -586,22 +549,6 @@ public final class FileBackedTaskManagerTest {
     }
 
     @Test
-    public void createEpicWithInProgressStatusTest() {
-        Epic epic = new Epic("Эпик", "Описание эпика");
-        epic.setStatus(TaskStatus.IN_PROGRESS);
-
-        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createEpic(epic));
-    }
-
-    @Test
-    public void createEpicWithDoneStatusTest() {
-        Epic epic = new Epic("Эпик", "Описание эпика");
-        epic.setStatus(TaskStatus.DONE);
-
-        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createEpic(epic));
-    }
-
-    @Test
     public void getEpicByIdTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
@@ -638,7 +585,7 @@ public final class FileBackedTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        Epic epicClone = epic.clone();
+        Epic epicClone = Epic.clone(epic);
         this.taskManager.updateEpic(epicClone);
 
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
@@ -721,9 +668,6 @@ public final class FileBackedTaskManagerTest {
     @Test
     public void getHistoryTest() throws IOException {
         Task task1 = new Task("Задача №1", "Описание задачи №1", LocalDateTime.now(), Duration.ofHours(8));
-        Assertions.assertTrue(task1.getStartTime().isPresent());
-        Assertions.assertTrue(task1.getDuration().isPresent());
-
         taskManager.createTask(task1);
         taskManager.getTaskById(task1.getId());
 
@@ -731,12 +675,9 @@ public final class FileBackedTaskManagerTest {
 
         Assertions.assertEquals(1, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(List.of(task1).toArray(), this.taskManager.getHistory().toArray());
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.getFirst());
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.getFirst());
 
         Task task2 = new Task("Задача №2", "Описание задачи №2", LocalDateTime.now(), Duration.ofHours(8));
-        Assertions.assertTrue(task2.getStartTime().isPresent());
-        Assertions.assertTrue(task2.getDuration().isPresent());
-
         taskManager.createTask(task2);
         taskManager.getTaskById(task2.getId());
 
@@ -744,8 +685,8 @@ public final class FileBackedTaskManagerTest {
 
         Assertions.assertEquals(2, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, task2).toArray(), this.taskManager.getHistory().toArray());
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.get(0));
-        Assertions.assertEquals(String.join(",", String.valueOf(task2.getId()), TaskType.TASK.toString(), task2.getName(), task2.getStatus().toString(), task2.getDescription(), task2.getStartTime().get().toString(), task2.getDuration().get().toString()), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.get(0));
+        Assertions.assertEquals(String.join(",", String.valueOf(task2.getId()), TaskType.TASK.toString(), task2.getName(), task2.getStatus().toString(), task2.getDescription(), task2.getStartTime().toString(), task2.getDuration().toString()), lines.get(1));
 
         taskManager.getTaskById(task1.getId());
 
@@ -758,7 +699,7 @@ public final class FileBackedTaskManagerTest {
 
         Assertions.assertEquals(1, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(List.of(task1).toArray(), this.taskManager.getHistory().toArray());
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.getFirst());
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.getFirst());
 
         Epic epic1 = new Epic("Эпик №1", "Описание эпика № 1");
         Assertions.assertTrue(epic1.getStartTime().isEmpty());
@@ -772,12 +713,9 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertEquals(2, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, epic1).toArray(), this.taskManager.getHistory().toArray());
         Assertions.assertEquals(String.join(",", String.valueOf(epic1.getId()), TaskType.EPIC.toString(), epic1.getName(), epic1.getStatus().toString(), epic1.getDescription(), null, null), lines.get(0));
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.get(1));
 
         SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now(), Duration.ofHours(8), epic1);
-        Assertions.assertTrue(subTask1.getStartTime().isPresent());
-        Assertions.assertTrue(subTask1.getDuration().isPresent());
-
         epic1.addSubTask(subTask1);
         Assertions.assertTrue(epic1.getStartTime().isPresent());
         Assertions.assertTrue(epic1.getDuration().isPresent());
@@ -790,8 +728,8 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertEquals(3, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, epic1, subTask1).toArray(), this.taskManager.getHistory().toArray());
         Assertions.assertEquals(String.join(",", String.valueOf(epic1.getId()), TaskType.EPIC.toString(), epic1.getName(), epic1.getStatus().toString(), epic1.getDescription(), epic1.getStartTime().get().toString(), epic1.getDuration().get().toString()), lines.get(0));
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().get().toString(), subTask1.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(1));
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.get(2));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().toString(), subTask1.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.get(2));
 
         taskManager.getEpicById(epic1.getId());
 
@@ -799,9 +737,6 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1).toArray(), this.taskManager.getHistory().toArray());
 
         SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now(), Duration.ofHours(8), epic1);
-        Assertions.assertTrue(subTask2.getStartTime().isPresent());
-        Assertions.assertTrue(subTask2.getDuration().isPresent());
-
         epic1.addSubTask(subTask2);
         Assertions.assertTrue(epic1.getStartTime().isPresent());
         Assertions.assertTrue(epic1.getDuration().isPresent());
@@ -814,9 +749,9 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertEquals(4, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1, subTask2).toArray(), this.taskManager.getHistory().toArray());
         Assertions.assertEquals(String.join(",", String.valueOf(epic1.getId()), TaskType.EPIC.toString(), epic1.getName(), epic1.getStatus().toString(), epic1.getDescription(), epic1.getStartTime().get().toString(), epic1.getDuration().get().toString()), lines.get(0));
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().get().toString(), subTask1.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(1));
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().get().toString(), subTask2.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(2));
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.get(3));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().toString(), subTask1.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().toString(), subTask2.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(2));
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.get(3));
 
         Epic epic2 = new Epic("Эпик №2", "Описание эпика № 2");
         Assertions.assertTrue(epic2.getStartTime().isEmpty());
@@ -825,9 +760,6 @@ public final class FileBackedTaskManagerTest {
         taskManager.createEpic(epic2);
 
         SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now(), Duration.ofHours(8), epic2);
-        Assertions.assertTrue(subTask3.getStartTime().isPresent());
-        Assertions.assertTrue(subTask3.getDuration().isPresent());
-
         epic2.addSubTask(subTask3);
         Assertions.assertTrue(epic2.getStartTime().isPresent());
         Assertions.assertTrue(epic2.getDuration().isPresent());
@@ -835,19 +767,16 @@ public final class FileBackedTaskManagerTest {
         taskManager.createSubTask(subTask3);
         taskManager.getSubTaskById(subTask3.getId());
 
-        Assertions.assertTrue(subTask3.getStartTime().isPresent());
-        Assertions.assertTrue(subTask3.getDuration().isPresent());
-
         lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
         Assertions.assertEquals(5, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1, subTask2, subTask3).toArray(), this.taskManager.getHistory().toArray());
         Assertions.assertEquals(String.join(",", String.valueOf(epic1.getId()), TaskType.EPIC.toString(), epic1.getName(), epic1.getStatus().toString(), epic1.getDescription(), epic1.getStartTime().get().toString(), epic1.getDuration().get().toString()), lines.get(0));
         Assertions.assertEquals(String.join(",", String.valueOf(epic2.getId()), TaskType.EPIC.toString(), epic2.getName(), epic2.getStatus().toString(), epic2.getDescription(), epic2.getStartTime().get().toString(), epic2.getDuration().get().toString()), lines.get(1));
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().get().toString(), subTask1.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(2));
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().get().toString(), subTask2.getDuration().get().toString(), String.valueOf(epic1.getId())), lines.get(3));
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().get().toString(), subTask3.getDuration().get().toString(), String.valueOf(epic2.getId())), lines.get(4));
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.get(5));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask1.getId()), TaskType.SUBTASK.toString(), subTask1.getName(), subTask1.getStatus().toString(), subTask1.getDescription(), subTask1.getStartTime().toString(), subTask1.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(2));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask2.getId()), TaskType.SUBTASK.toString(), subTask2.getName(), subTask2.getStatus().toString(), subTask2.getDescription(), subTask2.getStartTime().toString(), subTask2.getDuration().toString(), String.valueOf(epic1.getId())), lines.get(3));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().toString(), subTask3.getDuration().toString(), String.valueOf(epic2.getId())), lines.get(4));
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.get(5));
 
         taskManager.removeEpicById(epic1.getId());
 
@@ -856,7 +785,7 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertEquals(2, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, subTask3).toArray(), this.taskManager.getHistory().toArray());
         Assertions.assertEquals(String.join(",", String.valueOf(epic2.getId()), TaskType.EPIC.toString(), epic2.getName(), epic2.getStatus().toString(), epic2.getDescription(), epic2.getStartTime().get().toString(), epic2.getDuration().get().toString()), lines.get(0));
-        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().get().toString(), subTask3.getDuration().get().toString(), String.valueOf(epic2.getId())), lines.get(1));
-        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().get().toString(), task1.getDuration().get().toString()), lines.get(2));
+        Assertions.assertEquals(String.join(",", String.valueOf(subTask3.getId()), TaskType.SUBTASK.toString(), subTask3.getName(), subTask3.getStatus().toString(), subTask3.getDescription(), subTask3.getStartTime().toString(), subTask3.getDuration().toString(), String.valueOf(epic2.getId())), lines.get(1));
+        Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.get(2));
     }
 }

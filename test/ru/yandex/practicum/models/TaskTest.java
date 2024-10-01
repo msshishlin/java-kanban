@@ -18,34 +18,22 @@ public class TaskTest {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.ofHours(8);
 
-        Task task1 = new Task("Задача", "Описание задачи");
+        Task task1 = new Task("Задача", "Описание задачи", now, duration);
 
         Assertions.assertEquals("Задача", task1.getName());
         Assertions.assertEquals("Описание задачи", task1.getDescription());
         Assertions.assertEquals(TaskStatus.NEW, task1.getStatus());
-        Assertions.assertTrue(task1.getStartTime().isEmpty());
-        Assertions.assertTrue(task1.getDuration().isEmpty());
+        Assertions.assertEquals(now, task1.getStartTime());
+        Assertions.assertEquals(duration, task1.getDuration());
 
-        Task task2 = new Task("Задача", "Описание задачи", now, duration);
+        Task task2 = new Task(5, "Задача", "Описание задачи", TaskStatus.IN_PROGRESS, now, duration);
 
+        Assertions.assertEquals(5, task2.getId());
         Assertions.assertEquals("Задача", task2.getName());
         Assertions.assertEquals("Описание задачи", task2.getDescription());
-        Assertions.assertEquals(TaskStatus.NEW, task2.getStatus());
-        Assertions.assertTrue(task2.getStartTime().isPresent());
-        Assertions.assertEquals(now, task2.getStartTime().get());
-        Assertions.assertTrue(task2.getDuration().isPresent());
-        Assertions.assertEquals(duration, task2.getDuration().get());
-
-        Task task3 = new Task(5, "Задача", "Описание задачи", TaskStatus.IN_PROGRESS, now, duration);
-
-        Assertions.assertEquals(5, task3.getId());
-        Assertions.assertEquals("Задача", task3.getName());
-        Assertions.assertEquals("Описание задачи", task3.getDescription());
-        Assertions.assertEquals(TaskStatus.IN_PROGRESS, task3.getStatus());
-        Assertions.assertTrue(task3.getStartTime().isPresent());
-        Assertions.assertEquals(now, task3.getStartTime().get());
-        Assertions.assertTrue(task3.getDuration().isPresent());
-        Assertions.assertEquals(duration, task3.getDuration().get());
+        Assertions.assertEquals(TaskStatus.IN_PROGRESS, task2.getStatus());
+        Assertions.assertEquals(now, task2.getStartTime());
+        Assertions.assertEquals(duration, task2.getDuration());
     }
 
     @Test
@@ -60,14 +48,12 @@ public class TaskTest {
 
     @Test
     public void createTaskWithoutNameTest() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(null, "Описание задачи"));
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(null, "Описание задачи", LocalDateTime.now(), Duration.ofHours(8)));
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(5, null, "Описание задачи", TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8)));
     }
 
     @Test
     public void createTaskWithoutDescriptionTest() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task("Задача", null));
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Task("Задача", null, LocalDateTime.now(), Duration.ofHours(8)));
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(5, "Задача", null, TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8)));
     }
@@ -119,21 +105,7 @@ public class TaskTest {
     public void toStringTest() {
         Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
 
-        String startTime;
-        if (task.getStartTime().isEmpty()) {
-            startTime = null;
-        } else {
-            startTime = task.getStartTime().get().toString();
-        }
-
-        String duration;
-        if (task.getDuration().isEmpty()) {
-            duration = null;
-        } else {
-            duration = task.getDuration().get().toString();
-        }
-
-        String expected = task.getClass().getSimpleName() + "{" + "id: " + task.getId() + ", name: " + task.getName() + ", description: " + task.getDescription() + ", status: " + task.getStatus().name() + ", startTime: " + startTime + ", duration: " + duration + "}";
+        String expected = task.getClass().getSimpleName() + "{" + "id: " + task.getId() + ", name: " + task.getName() + ", description: " + task.getDescription() + ", status: " + task.getStatus().name() + ", startTime: " + task.getStartTime() + ", duration: " + task.getDuration() + "}";
 
         Assertions.assertEquals(expected, task.toString());
     }
@@ -141,7 +113,7 @@ public class TaskTest {
     @Test
     public void cloneTaskTest() {
         Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
-        Task taskClone = task.clone();
+        Task taskClone = Task.clone(task);
 
         Assertions.assertEquals(task.getId(), taskClone.getId());
         Assertions.assertEquals(task.getName(), taskClone.getName());
@@ -152,7 +124,7 @@ public class TaskTest {
     @Test
     public void compareTwoTasksWithSameIdTest() {
         Task task1 = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
-        Task task2 = task1.clone();
+        Task task2 = Task.clone(task1);
 
         Assertions.assertEquals(task1, task2);
     }

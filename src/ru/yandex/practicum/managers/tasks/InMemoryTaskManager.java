@@ -6,6 +6,7 @@ import ru.yandex.practicum.abstractions.HistoryManager;
 import ru.yandex.practicum.abstractions.TaskManager;
 import ru.yandex.practicum.constants.TaskStatus;
 import ru.yandex.practicum.managers.history.InMemoryHistoryManager;
+import ru.yandex.practicum.models.AbstractTask;
 import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
@@ -36,7 +37,7 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * История просмотра задач.
      */
-    private final HistoryManager<Integer, Task> historyManager;
+    private final HistoryManager<Integer, AbstractTask> historyManager;
 
     /**
      * Конструктор.
@@ -230,7 +231,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         subTask.getEpic().updateSubTask(subTask);
-        subTask.getEpic().updateStatus();
 
         this.subTasks.put(subTask.getId(), subTask);
     }
@@ -248,7 +248,6 @@ public class InMemoryTaskManager implements TaskManager {
         SubTask subTask = this.subTasks.get(subTaskId);
 
         subTask.getEpic().removeSubTask(subTask);
-        subTask.getEpic().updateStatus();
 
         this.historyManager.remove(subTaskId);
         this.subTasks.remove(subTaskId);
@@ -262,7 +261,6 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = subTask.getEpic();
 
             epic.removeSubTask(subTask);
-            epic.updateStatus();
 
             this.historyManager.remove(subTask.getId());
         }
@@ -386,7 +384,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @return история просмотра задач.
      */
-    public List<Task> getHistory() {
+    public List<AbstractTask> getHistory() {
         return this.historyManager.getHistory();
     }
 

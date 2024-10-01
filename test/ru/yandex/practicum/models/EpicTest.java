@@ -24,11 +24,11 @@ public class EpicTest {
         Assertions.assertTrue(epic1.getDuration().isEmpty());
         Assertions.assertEquals(0, epic1.getAllSubTasks().size());
 
-        Epic epic2 = new Epic(5, "Эпик", "Описание эпика", TaskStatus.IN_PROGRESS, new HashMap<>());
+        Epic epic2 = new Epic(5, "Эпик", "Описание эпика", new HashMap<>());
 
         Assertions.assertEquals("Эпик", epic2.getName());
         Assertions.assertEquals("Описание эпика", epic2.getDescription());
-        Assertions.assertEquals(TaskStatus.IN_PROGRESS, epic2.getStatus());
+        Assertions.assertEquals(TaskStatus.NEW, epic2.getStatus());
         Assertions.assertTrue(epic2.getStartTime().isEmpty());
         Assertions.assertTrue(epic2.getDuration().isEmpty());
         Assertions.assertEquals(0, epic2.getAllSubTasks().size());
@@ -36,7 +36,7 @@ public class EpicTest {
 
     @Test
     public void createEpicWithoutSubTasksTest() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new Epic(5, "Эпик", "Описание эпика", TaskStatus.IN_PROGRESS, null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Epic(5, "Эпик", "Описание эпика", null));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class EpicTest {
 
         Assertions.assertEquals(TaskStatus.NEW, epic.getAllSubTasks().getFirst().getStatus());
 
-        SubTask subTaskClone = subTask.clone();
+        SubTask subTaskClone = SubTask.clone(subTask);
         subTaskClone.setStatus(TaskStatus.IN_PROGRESS);
 
         epic.updateSubTask(subTaskClone);
@@ -215,39 +215,29 @@ public class EpicTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
 
-        epic.updateStatus();
-        Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
-
         SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask1);
 
-        epic.updateStatus();
         Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
 
         subTask1.setStatus(TaskStatus.IN_PROGRESS);
-        epic.updateStatus();
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
 
         subTask1.setStatus(TaskStatus.DONE);
-        epic.updateStatus();
         Assertions.assertEquals(TaskStatus.DONE, epic.getStatus());
 
         SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask2);
 
-        epic.updateStatus();
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
 
         subTask2.setStatus(TaskStatus.IN_PROGRESS);
-        epic.updateStatus();
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
 
         subTask2.setStatus(TaskStatus.DONE);
-        epic.updateStatus();
         Assertions.assertEquals(TaskStatus.DONE, epic.getStatus());
 
         epic.removeAllSubTasks();
-        epic.updateStatus();
         Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
     }
 
@@ -273,7 +263,7 @@ public class EpicTest {
         SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
-        Epic epicClone = epic.clone();
+        Epic epicClone = Epic.clone(epic);
 
         Assertions.assertEquals(epic.getId(), epicClone.getId());
         Assertions.assertEquals(epic.getName(), epicClone.getName());

@@ -61,9 +61,8 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                         int id = Integer.parseInt(parts[0]);
                         String name = parts[2];
                         String description = parts[4];
-                        TaskStatus status = TaskStatus.valueOf(parts[3]);
 
-                        Epic epic = new Epic(id, name, description, status, new HashMap<>());
+                        Epic epic = new Epic(id, name, description, new HashMap<>());
 
                         taskManager.createEpic(epic);
                         break;

@@ -2,6 +2,7 @@ package ru.yandex.practicum.abstractions;
 
 // region imports
 
+import ru.yandex.practicum.models.AbstractTask;
 import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
@@ -161,7 +162,7 @@ public interface TaskManager {
      * Получить историю просмотра задач.
      * @return история просмотра задач.
      */
-    List<Task> getHistory();
+    List<AbstractTask> getHistory();
 
     // endregion
 }
