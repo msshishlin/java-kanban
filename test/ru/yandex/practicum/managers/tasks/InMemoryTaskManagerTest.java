@@ -11,6 +11,8 @@ import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void createTaskTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
         Assertions.assertEquals(1, this.taskManager.getAllTasks().size());
@@ -39,7 +41,7 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void createTaskTwiceTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
         Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task));
@@ -47,7 +49,7 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void createTaskWithInProgressStatusTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         task.setStatus(TaskStatus.IN_PROGRESS);
 
         Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task));
@@ -55,7 +57,7 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void createTaskWithDoneStatusTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         task.setStatus(TaskStatus.DONE);
 
         Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task));
@@ -63,7 +65,7 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void getTaskByIdTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
         Assertions.assertEquals(task, this.taskManager.getTaskById(task.getId()));
@@ -76,13 +78,13 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void getAllTasksTest() {
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
+        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task1);
 
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task2);
 
-        Task task3 = new Task("Задача 3", "Описание задачи 3");
+        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task3);
 
         Assertions.assertEquals(3, this.taskManager.getAllTasks().size());
@@ -90,7 +92,7 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void updateTaskTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
         Task taskClone = task.clone();
@@ -108,14 +110,14 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void updateUnknownTaskTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
 
         Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.updateTask(task));
     }
 
     @Test
     public void removeTaskByIdTest() {
-        Task task = new Task("Задача", "Описание задачи");
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
         Assertions.assertEquals(1, this.taskManager.getAllTasks().size());
@@ -132,13 +134,13 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void removeAllTasksTest() {
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
+        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task1);
 
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task2);
 
-        Task task3 = new Task("Задача 3", "Описание задачи 3");
+        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task3);
 
         Assertions.assertEquals(3, this.taskManager.getAllTasks().size());
@@ -153,7 +155,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
         this.taskManager.createSubTask(subTask);
@@ -171,7 +173,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
         this.taskManager.createSubTask(subTask);
@@ -184,7 +186,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         subTask.setStatus(TaskStatus.IN_PROGRESS);
 
         epic.addSubTask(subTask);
@@ -197,7 +199,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         subTask.setStatus(TaskStatus.DONE);
 
         epic.addSubTask(subTask);
@@ -209,7 +211,7 @@ public final class InMemoryTaskManagerTest {
     public void createSubTaskWithoutCreatingEpicTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
         Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createSubTask(subTask));
@@ -220,7 +222,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
 
         Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createSubTask(subTask));
     }
@@ -230,7 +232,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
         this.taskManager.createSubTask(subTask);
@@ -248,26 +250,26 @@ public final class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -279,26 +281,26 @@ public final class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -310,7 +312,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
         this.taskManager.createSubTask(subTask);
@@ -336,7 +338,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
 
         Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.updateSubTask(subTask));
     }
@@ -346,7 +348,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
         this.taskManager.createSubTask(subTask);
@@ -366,26 +368,26 @@ public final class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -486,7 +488,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
         this.taskManager.createSubTask(subTask);
@@ -507,26 +509,26 @@ public final class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -538,14 +540,14 @@ public final class InMemoryTaskManagerTest {
 
     @Test
     public void getHistoryTest() {
-        Task task1 = new Task("Задача №1", "Описание задачи №1");
+        Task task1 = new Task("Задача №1", "Описание задачи №1", LocalDateTime.now(), Duration.ofHours(8));
         taskManager.createTask(task1);
         taskManager.getTaskById(task1.getId());
 
         Assertions.assertEquals(1, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(List.of(task1).toArray(), this.taskManager.getHistory().toArray());
 
-        Task task2 = new Task("Задача №2", "Описание задачи №2");
+        Task task2 = new Task("Задача №2", "Описание задачи №2", LocalDateTime.now(), Duration.ofHours(8));
         taskManager.createTask(task2);
         taskManager.getTaskById(task2.getId());
 
@@ -569,7 +571,7 @@ public final class InMemoryTaskManagerTest {
         Assertions.assertEquals(2, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, epic1).toArray(), this.taskManager.getHistory().toArray());
 
-        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", epic1);
+        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask1);
         taskManager.createSubTask(subTask1);
         taskManager.getSubTaskById(subTask1.getId());
@@ -582,7 +584,7 @@ public final class InMemoryTaskManagerTest {
         Assertions.assertEquals(3, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1).toArray(), this.taskManager.getHistory().toArray());
 
-        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", epic1);
+        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now(), Duration.ofHours(8), epic1);
         epic1.addSubTask(subTask2);
         taskManager.createSubTask(subTask2);
         taskManager.getSubTaskById(subTask2.getId());
@@ -593,7 +595,7 @@ public final class InMemoryTaskManagerTest {
         Epic epic2 = new Epic("Эпик №2", "Описание эпика № 2");
         taskManager.createEpic(epic2);
 
-        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", epic2);
+        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now(), Duration.ofHours(8), epic2);
         epic2.addSubTask(subTask3);
         taskManager.createSubTask(subTask3);
         taskManager.getSubTaskById(subTask3.getId());

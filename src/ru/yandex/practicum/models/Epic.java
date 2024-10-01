@@ -5,8 +5,11 @@ package ru.yandex.practicum.models;
 import ru.yandex.practicum.constants.TaskStatus;
 import ru.yandex.practicum.constants.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 //endregion
 
@@ -41,7 +44,11 @@ public final class Epic extends Task {
      * @param subTasks    коллекция подзадач.
      */
     public Epic(int id, String name, String description, TaskStatus status, HashMap<Integer, SubTask> subTasks) {
-        super(id, name, description, status);
+        super(id, name, description, status, null, null);
+
+        if (subTasks == null) {
+            throw new IllegalArgumentException("Parameter 'subTasks' can't be null");
+        }
 
         this.subTasks = subTasks;
     }
@@ -162,13 +169,54 @@ public final class Epic extends Task {
     // region Overrides of ru.yandex.practicum.models.Task
 
     /**
+     * Получить дату и время, когда предполагается приступить к выполнению задачи.
+     *
+     * @return дата и время, когда предполагается приступить к выполнению задачи.
+     */
+    @Override
+    public Optional<LocalDateTime> getStartTime() {
+        if (this.subTasks.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return this.subTasks.values().stream().map(st -> st.startTime).min(LocalDateTime::compareTo);
+    }
+
+    /**
+     * Получить продолжительность задачи - оценка того, сколько времени она займёт в минутах.
+     *
+     * @return продолжительность задачи - оценка того, сколько времени она займёт в минутах.
+     */
+    public Optional<Duration> getDuration() {
+        if (this.subTasks.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return this.subTasks.values().stream().map(st -> st.duration).reduce(Duration::plus);
+    }
+
+    /**
      * Преобразовать объект эпика в строку в формате CSV.
      *
      * @return объект эпика в виде строки в формате CSV.
      */
     @Override
     public String toCsvString() {
-        return String.join(",", String.valueOf(this.id), TaskType.EPIC.name(), this.name, this.status.name(), this.description);
+        String startTimeString;
+        if (this.getStartTime().isEmpty()) {
+            startTimeString = null;
+        } else {
+            startTimeString = this.getStartTime().get().toString();
+        }
+
+        String durationString;
+        if (this.getDuration().isEmpty()) {
+            durationString = null;
+        } else {
+            durationString = this.getDuration().get().toString();
+        }
+
+        return String.join(",", String.valueOf(this.id), TaskType.EPIC.name(), this.name, this.status.name(), this.description, startTimeString, durationString);
     }
 
     // endregion
@@ -177,7 +225,21 @@ public final class Epic extends Task {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + ", " + "sub_task_count: " + this.subTasks.size() + "}";
+        String startTimeString;
+        if (this.getStartTime().isEmpty()) {
+            startTimeString = null;
+        } else {
+            startTimeString = this.getStartTime().get().toString();
+        }
+
+        String durationString;
+        if (this.getDuration().isEmpty()) {
+            durationString = null;
+        } else {
+            durationString = this.getDuration().get().toString();
+        }
+
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", name: " + this.name + ", description: " + this.description + ", status: " + this.status.name() + ", startTime: " + startTimeString + ", duration: " + durationString + ", sub_task_count: " + this.subTasks.size() + "}";
     }
 
     // region Implements of Cloneable

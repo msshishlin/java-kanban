@@ -15,6 +15,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,11 +73,13 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                         String name = parts[2];
                         String description = parts[4];
                         TaskStatus status = TaskStatus.valueOf(parts[3]);
-                        int epicId = Integer.parseInt(parts[5]);
+                        LocalDateTime startTime = LocalDateTime.parse(parts[5]);
+                        Duration duration = Duration.parse(parts[6]);
+                        int epicId = Integer.parseInt(parts[7]);
 
                         Epic epic = taskManager.getEpicById(epicId);
 
-                        SubTask subTask = new SubTask(id, name, description, status, epic);
+                        SubTask subTask = new SubTask(id, name, description, status, startTime, duration, epic);
                         epic.addSubTask(subTask);
 
                         taskManager.createSubTask(subTask);
@@ -86,8 +90,10 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                         String name = parts[2];
                         String description = parts[4];
                         TaskStatus status = TaskStatus.valueOf(parts[3]);
+                        LocalDateTime startTime = LocalDateTime.parse(parts[5]);
+                        Duration duration = Duration.parse(parts[6]);
 
-                        Task task = new Task(id, name, description, status);
+                        Task task = new Task(id, name, description, status, startTime, duration);
 
                         taskManager.createTask(task);
                         break;
