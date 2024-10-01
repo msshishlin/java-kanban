@@ -3,6 +3,7 @@ package ru.yandex.practicum.models;
 //region imports
 
 import ru.yandex.practicum.constants.TaskStatus;
+import ru.yandex.practicum.constants.TaskType;
 
 import java.util.Objects;
 
@@ -66,7 +67,7 @@ public class Task implements Cloneable {
      * @param description описание задачи.
      * @param status      статус задачи.
      */
-    protected Task(int id, String name, String description, TaskStatus status) {
+    public Task(int id, String name, String description, TaskStatus status) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -120,6 +121,15 @@ public class Task implements Cloneable {
         this.status = newStatus;
     }
 
+    /**
+     * Преобразовать объект задачи в строку в формате CSV.
+     *
+     * @return объект задачи в виде строки в формате CSV.
+     */
+    public String toCsvString() {
+        return String.join(",", String.valueOf(this.id), TaskType.TASK.name(), this.name, this.status.name(), this.description);
+    }
+
     // region Overrides of java.lang.Object
 
     @Override
@@ -138,8 +148,7 @@ public class Task implements Cloneable {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", "
-                + "description: " + this.description + ", " + "status: " + this.status.name() + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + "}";
     }
 
     // region Implements of Cloneable
