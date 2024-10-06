@@ -85,6 +85,28 @@ public class Task extends AbstractTask {
     }
 
     /**
+     * Проверить пересекается ли другая задача с текущей по времени выполнения.
+     *
+     * @param otherTask первая задача.
+     * @return признак пересекается ли другая задача с текущей по времени выполнения.
+     */
+    public boolean isCrossed(Task otherTask) {
+        if (otherTask == null) {
+            throw new IllegalArgumentException("Parameter 'otherTask' can't be null");
+        }
+
+        if (otherTask.getStartTime().equals(this.getStartTime())) {
+            return true;
+        }
+
+        if (otherTask.getStartTime().isBefore(this.getStartTime()) && otherTask.getEndTime().isAfter(this.getStartTime())) {
+            return true;
+        }
+
+        return this.getStartTime().isBefore(otherTask.getStartTime()) && this.getEndTime().isAfter(otherTask.getEndTime());
+    }
+
+    /**
      * Клонировать задачу.
      *
      * @param task задача.

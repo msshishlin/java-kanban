@@ -111,6 +111,13 @@ public interface TaskManager {
 
     //endregion
 
+    /**
+     * Получить список задач в порядке приоритета.
+     *
+     * @return список задач.
+     */
+    List<Task> getPrioritizedTasks();
+
     // region Эпики
 
     /**
@@ -160,6 +167,7 @@ public interface TaskManager {
 
     /**
      * Получить историю просмотра задач.
+     *
      * @return история просмотра задач.
      */
     List<AbstractTask> getHistory();

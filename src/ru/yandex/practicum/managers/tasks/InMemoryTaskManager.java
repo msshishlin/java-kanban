@@ -11,10 +11,7 @@ import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 // endregion
 
@@ -57,17 +54,22 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param task задача.
      */
+    @Override
     public void createTask(Task task) {
         if (task == null) {
             throw new IllegalArgumentException("Parameter 'task' can't be null");
+        }
+
+        if (this.tasks.containsKey(task.getId())) {
+            throw new IllegalStateException("Задача с идентификатором " + task.getId() + " уже создана");
         }
 
         if (task.getStatus() != TaskStatus.NEW) {
             throw new IllegalStateException("Создание задачи возможно только в статусе 'NEW'. Текущий статус: '" + task.getStatus().name() + "'");
         }
 
-        if (this.tasks.containsKey(task.getId())) {
-            throw new IllegalStateException("Задача с идентификатором " + task.getId() + " уже создана");
+        if (this.tasks.values().stream().anyMatch(t -> t.isCrossed(task))) {
+            throw new IllegalStateException("Задача с идентификатором " + task.getId() + " пересекается с другой задачей по времени выполнения");
         }
 
         this.tasks.put(task.getId(), task);
@@ -79,6 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param taskId идентификатор задачи.
      * @return задача.
      */
+    @Override
     public Task getTaskById(int taskId) {
         Task task = this.tasks.get(taskId);
 
@@ -94,6 +97,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @return коллекция задач.
      */
+    @Override
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(this.tasks.values());
     }
@@ -103,6 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param task задача.
      */
+    @Override
     public void updateTask(Task task) {
         if (task == null) {
             throw new IllegalArgumentException("Parameter 'task' can't be null");
@@ -120,6 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param taskId идентификатор задачи.
      */
+    @Override
     public void removeTaskById(int taskId) {
         if (!this.tasks.containsKey(taskId)) {
             throw new IllegalStateException("Задача с идентификатором " + taskId + " не найдена");
@@ -132,6 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * Удалить все задачи.
      */
+    @Override
     public void removeAllTasks() {
         for (Integer taskId : this.tasks.keySet()) {
             this.historyManager.remove(taskId);
@@ -149,6 +156,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param subTask подзадача.
      */
+    @Override
     public void createSubTask(SubTask subTask) {
         if (subTask == null) {
             throw new IllegalArgumentException("Parameter 'subTask' can't be null");
@@ -160,6 +168,10 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (subTask.getStatus() != TaskStatus.NEW) {
             throw new IllegalStateException("Создание подзадачи возможно только в статусе 'NEW'. Текущий статус: '" + subTask.getStatus().name() + "'");
+        }
+
+        if (this.subTasks.values().stream().anyMatch(t -> t.isCrossed(subTask))) {
+            throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " пересекается с другой подзадачей по времени выполнения");
         }
 
         if (!this.epics.containsKey(subTask.getEpic().getId())) {
@@ -179,6 +191,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param subTaskId идентификатор подзадачи.
      * @return подзадача.
      */
+    @Override
     public SubTask getSubTaskById(int subTaskId) {
         SubTask subTask = this.subTasks.get(subTaskId);
 
@@ -195,6 +208,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param epic эпик.
      * @return коллекция подзадач.
      */
+    @Override
     public ArrayList<SubTask> getSubTasksByEpic(Epic epic) {
         ArrayList<SubTask> subTasks = new ArrayList<>();
 
@@ -212,6 +226,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @return коллекция подзадач.
      */
+    @Override
     public ArrayList<SubTask> getAllSubTasks() {
         return new ArrayList<>(this.subTasks.values());
     }
@@ -221,6 +236,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param subTask подзадача.
      */
+    @Override
     public void updateSubTask(SubTask subTask) {
         if (subTask == null) {
             throw new IllegalArgumentException("Parameter 'subTask' can't be null");
@@ -240,6 +256,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param subTaskId идентификатор подзадачи
      */
+    @Override
     public void removeSubTaskById(int subTaskId) {
         if (!this.subTasks.containsKey(subTaskId)) {
             throw new IllegalStateException("Подзадача с идентификатором " + subTaskId + " не найдена");
@@ -256,6 +273,7 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * Удалить все подзадачи.
      */
+    @Override
     public void removeAllSubTasks() {
         for (SubTask subTask : this.subTasks.values()) {
             Epic epic = subTask.getEpic();
@@ -268,7 +286,25 @@ public class InMemoryTaskManager implements TaskManager {
         this.subTasks.clear();
     }
 
+
     //endregion
+
+    /**
+     * Получить список задач в порядке приоритета.
+     *
+     * @return список задач.
+     */
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        ArrayList<Task> result = new ArrayList<>();
+
+        result.addAll(this.tasks.values().stream().filter(t -> t.getStartTime() != null).toList());
+        result.addAll(this.subTasks.values().stream().filter(st -> st.getStartTime() != null).toList());
+
+        result.sort(Comparator.comparing(Task::getStartTime));
+
+        return result;
+    }
 
     // region Эпики
 
@@ -277,6 +313,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param epic эпик.
      */
+    @Override
     public void createEpic(Epic epic) {
         if (epic == null) {
             throw new IllegalArgumentException("Parameter 'epic' can't be null");
@@ -299,6 +336,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @param epicId идентификатор эпика.
      * @return эпик.
      */
+    @Override
     public Epic getEpicById(int epicId) {
         Epic epic = this.epics.get(epicId);
 
@@ -314,6 +352,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @return коллекция эпиков.
      */
+    @Override
     public ArrayList<Epic> getAllEpics() {
         return new ArrayList<>(this.epics.values());
     }
@@ -323,6 +362,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param epic эпик.
      */
+    @Override
     public void updateEpic(Epic epic) {
         if (epic == null) {
             throw new IllegalArgumentException("Parameter 'epic' can't be null");
@@ -340,6 +380,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @param epicId идентификатор эпика.
      */
+    @Override
     public void removeEpicById(int epicId) {
         if (!this.epics.containsKey(epicId)) {
             throw new IllegalStateException("Эпик с идентификатором " + epicId + " не найден");
@@ -361,6 +402,7 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * Удалить все эпики.
      */
+    @Override
     public void removeAllEpics() {
         for (Integer subTaskId : this.subTasks.keySet()) {
             this.historyManager.remove(subTaskId);
@@ -384,6 +426,7 @@ public class InMemoryTaskManager implements TaskManager {
      *
      * @return история просмотра задач.
      */
+    @Override
     public List<AbstractTask> getHistory() {
         return this.historyManager.getHistory();
     }
