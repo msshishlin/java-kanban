@@ -27,6 +27,11 @@ public final class InMemoryTaskManagerTest {
     }
 
     @Test
+    public void createNullInsteadOfTaskTest() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> this.taskManager.createTask(null));
+    }
+
+    @Test
     public void createTaskTest() {
         Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
@@ -35,8 +40,20 @@ public final class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void createNullInsteadOfTaskTest() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> this.taskManager.createTask(null));
+    public void createCrossedTaskTest() {
+        LocalDateTime startTime = LocalDateTime.now();
+
+        Task task1 = new Task("Задача 1", "Описание задачи 1", startTime, Duration.ofHours(8));
+        this.taskManager.createTask(task1);
+
+        Task task2 = new Task("Задача 2", "Описание задачи 2", startTime, Duration.ofHours(8));
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task2));
+
+        Task task3 = new Task("Задача 3", "Описание задачи 3", startTime.minusHours(4), Duration.ofHours(8));
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task3));
+
+        Task task4 = new Task("Задача 4", "Описание задачи 4", startTime.plusHours(4), Duration.ofHours(8));
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task4));
     }
 
     @Test
@@ -161,6 +178,30 @@ public final class InMemoryTaskManagerTest {
         this.taskManager.createSubTask(subTask);
 
         Assertions.assertEquals(1, this.taskManager.getAllSubTasks().size());
+    }
+
+    @Test
+    public void createCrossedSubTaskTest() {
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        this.taskManager.createEpic(epic);
+
+        LocalDateTime startTime = LocalDateTime.now();
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", startTime, Duration.ofHours(8), epic);
+        epic.addSubTask(subTask1);
+        this.taskManager.createSubTask(subTask1);
+
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", startTime, Duration.ofHours(8), epic);
+        epic.addSubTask(subTask2);
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createSubTask(subTask2));
+
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", startTime.minusHours(4), Duration.ofHours(8), epic);
+        epic.addSubTask(subTask3);
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createSubTask(subTask3));
+
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", startTime.plusHours(4), Duration.ofHours(8), epic);
+        epic.addSubTask(subTask4);
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createSubTask(subTask4));
     }
 
     @Test
@@ -396,6 +437,43 @@ public final class InMemoryTaskManagerTest {
         Assertions.assertEquals(0, this.taskManager.getAllSubTasks().size());
         Assertions.assertEquals(0, this.taskManager.getEpicById(epic1.getId()).getAllSubTasks().size());
         Assertions.assertEquals(0, this.taskManager.getEpicById(epic2.getId()).getAllSubTasks().size());
+    }
+
+    @Test
+    public void getPrioritizedTasksTest() {
+        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.now(), Duration.ofHours(1));
+        this.taskManager.createTask(task1);
+
+        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.now().minusHours(16), Duration.ofHours(1));
+        this.taskManager.createTask(task2);
+
+        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
+        this.taskManager.createEpic(epic1);
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now().plusHours(16), Duration.ofHours(1), epic1);
+        epic1.addSubTask(subTask1);
+        this.taskManager.createSubTask(subTask1);
+
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(4), Duration.ofHours(1), epic1);
+        epic1.addSubTask(subTask2);
+        this.taskManager.createSubTask(subTask2);
+
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now().minusHours(8), Duration.ofHours(1), epic1);
+        epic1.addSubTask(subTask3);
+        this.taskManager.createSubTask(subTask3);
+
+        Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
+        this.taskManager.createEpic(epic2);
+
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now().minusHours(4), Duration.ofHours(1), epic2);
+        epic2.addSubTask(subTask4);
+        this.taskManager.createSubTask(subTask4);
+
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now().plusHours(8), Duration.ofHours(1), epic2);
+        epic2.addSubTask(subTask5);
+        this.taskManager.createSubTask(subTask5);
+
+        Assertions.assertIterableEquals(List.of(task2, subTask3, subTask4, task1, subTask2, subTask5, subTask1), this.taskManager.getPrioritizedTasks());
     }
 
     @Test

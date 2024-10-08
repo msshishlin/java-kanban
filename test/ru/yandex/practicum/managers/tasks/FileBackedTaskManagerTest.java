@@ -100,6 +100,23 @@ public final class FileBackedTaskManagerTest {
     }
 
     @Test
+    public void createCrossedTaskTest() {
+        LocalDateTime startTime = LocalDateTime.now();
+
+        Task task1 = new Task("Задача 1", "Описание задачи 1", startTime, Duration.ofHours(8));
+        this.taskManager.createTask(task1);
+
+        Task task2 = new Task("Задача 2", "Описание задачи 2", startTime, Duration.ofHours(8));
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task2));
+
+        Task task3 = new Task("Задача 3", "Описание задачи 3", startTime.minusHours(4), Duration.ofHours(8));
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task3));
+
+        Task task4 = new Task("Задача 4", "Описание задачи 4", startTime.plusHours(4), Duration.ofHours(8));
+        Assertions.assertThrows(IllegalStateException.class, () -> this.taskManager.createTask(task4));
+    }
+
+    @Test
     public void createNullInsteadOfTaskTest() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> this.taskManager.createTask(null));
     }

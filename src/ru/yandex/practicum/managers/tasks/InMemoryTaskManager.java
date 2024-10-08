@@ -68,7 +68,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Создание задачи возможно только в статусе 'NEW'. Текущий статус: '" + task.getStatus().name() + "'");
         }
 
-        if (this.tasks.values().stream().anyMatch(t -> t.isCrossed(task))) {
+        if (this.tasks.values().stream().anyMatch(t -> t.isCrossed(task)) || this.subTasks.values().stream().anyMatch(st -> st.isCrossed(task))) {
             throw new IllegalStateException("Задача с идентификатором " + task.getId() + " пересекается с другой задачей по времени выполнения");
         }
 
@@ -170,8 +170,8 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Создание подзадачи возможно только в статусе 'NEW'. Текущий статус: '" + subTask.getStatus().name() + "'");
         }
 
-        if (this.subTasks.values().stream().anyMatch(t -> t.isCrossed(subTask))) {
-            throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " пересекается с другой подзадачей по времени выполнения");
+        if (this.tasks.values().stream().anyMatch(t -> t.isCrossed(subTask)) || this.subTasks.values().stream().anyMatch(st -> st.isCrossed(subTask))) {
+            throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " пересекается с другой задачей по времени выполнения");
         }
 
         if (!this.epics.containsKey(subTask.getEpic().getId())) {
@@ -312,10 +312,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void createEpic(Epic epic) {
         if (epic == null) {
             throw new IllegalArgumentException("Parameter 'epic' can't be null");
-        }
-
-        if (epic.getStatus() != TaskStatus.NEW) {
-            throw new IllegalStateException("Создание эпика возможно только в статусе 'NEW'. Текущий статус: '" + epic.getStatus().name() + "'");
         }
 
         if (this.epics.containsKey(epic.getId())) {
