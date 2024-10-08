@@ -98,7 +98,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return коллекция задач.
      */
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         return new ArrayList<>(this.tasks.values());
     }
 
@@ -209,16 +209,11 @@ public class InMemoryTaskManager implements TaskManager {
      * @return коллекция подзадач.
      */
     @Override
-    public ArrayList<SubTask> getSubTasksByEpic(Epic epic) {
-        ArrayList<SubTask> subTasks = new ArrayList<>();
-
-        for (SubTask subTask : this.subTasks.values()) {
-            if (subTask.getEpic().equals(epic)) {
-                subTasks.add(subTask);
-            }
-        }
-
-        return subTasks;
+    public List<SubTask> getSubTasksByEpic(Epic epic) {
+        return this.subTasks.values()
+                            .stream()
+                            .filter(st -> st.getEpic().equals(epic))
+                            .toList();
     }
 
     /**
@@ -227,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return коллекция подзадач.
      */
     @Override
-    public ArrayList<SubTask> getAllSubTasks() {
+    public List<SubTask> getAllSubTasks() {
         return new ArrayList<>(this.subTasks.values());
     }
 
@@ -353,7 +348,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return коллекция эпиков.
      */
     @Override
-    public ArrayList<Epic> getAllEpics() {
+    public List<Epic> getAllEpics() {
         return new ArrayList<>(this.epics.values());
     }
 

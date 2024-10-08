@@ -7,7 +7,6 @@ import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 // endregion
@@ -35,7 +34,7 @@ public interface TaskManager {
      *
      * @return коллекция задач.
      */
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     /**
      * Обновить задачу.
@@ -81,14 +80,14 @@ public interface TaskManager {
      * @param epic эпик.
      * @return коллекция подзадач.
      */
-    ArrayList<SubTask> getSubTasksByEpic(Epic epic);
+    List<SubTask> getSubTasksByEpic(Epic epic);
 
     /**
      * Получить все подзадачи.
      *
      * @return коллекция подзадач.
      */
-    ArrayList<SubTask> getAllSubTasks();
+    List<SubTask> getAllSubTasks();
 
     /**
      * Обновить подзадачу.
@@ -140,7 +139,7 @@ public interface TaskManager {
      *
      * @return коллекция эпиков.
      */
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     /**
      * Обновить эпик.
