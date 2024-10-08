@@ -53,14 +53,38 @@ public class TaskTest {
     }
 
     @Test
+    public void createTaskWithWhitespaceNameTest() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(" ", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(5, " ", "Описание задачи", TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8)));
+    }
+
+    @Test
     public void createTaskWithoutDescriptionTest() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Task("Задача", null, LocalDateTime.now(), Duration.ofHours(8)));
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(5, "Задача", null, TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8)));
     }
 
     @Test
+    public void createTaskWithWhitespaceDescriptionTest() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task("Задача", " ", LocalDateTime.now(), Duration.ofHours(8)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(5, "Задача", " ", TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8)));
+    }
+
+    @Test
     public void createTaskWithoutStatusTest() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(1, "Задача", "Описание задачи", null, LocalDateTime.now(), Duration.ofHours(8)));
+    }
+
+    @Test
+    public void createTaskWithoutStartTimeTest() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task("Задача", "Описание задачи", null, Duration.ofHours(8)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(5, "Задача", "Описание задачи", TaskStatus.NEW, null, Duration.ofHours(8)));
+    }
+
+    @Test
+    public void createTaskWithoutDurationTest() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task("Задача", "Описание задачи", LocalDateTime.now(), null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Task(5, "Задача", "Описание задачи", TaskStatus.NEW, LocalDateTime.now(), null));
     }
 
     @Test
@@ -95,6 +119,45 @@ public class TaskTest {
     }
 
     @Test
+    public void cloneTaskTest() {
+        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
+        Task taskClone = Task.clone(task);
+
+        Assertions.assertEquals(task.getId(), taskClone.getId());
+        Assertions.assertEquals(task.getName(), taskClone.getName());
+        Assertions.assertEquals(task.getDescription(), taskClone.getDescription());
+        Assertions.assertEquals(task.getStatus(), taskClone.getStatus());
+    }
+
+    @Test
+    public void isCrossedTest() {
+        LocalDateTime startTime = LocalDateTime.now();
+
+        Task task1 = new Task("Задача 1", "Описание задачи 1", startTime, Duration.ofHours(8));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> task1.isCrossed(null));
+
+        Task task2 = new Task("Задача 2", "Описание задачи 2", startTime, Duration.ofHours(8));
+        Assertions.assertTrue(task1.isCrossed(task2));
+
+        Task task3 = new Task("Задача 3", "Описание задачи 3", startTime.minusHours(4), Duration.ofHours(8));
+        Assertions.assertTrue(task1.isCrossed(task3));
+
+        Task task4 = new Task("Задача 4", "Описание задачи 4", startTime.plusHours(4), Duration.ofHours(8));
+        Assertions.assertTrue(task1.isCrossed(task4));
+
+        Task task5 = new Task("Задача 5", "Описание задачи 5", startTime.plusHours(16), Duration.ofHours(8));
+        Assertions.assertFalse(task1.isCrossed(task5));
+    }
+
+    @Test
+    public void compareTwoTasksWithSameIdTest() {
+        Task task1 = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
+        Task task2 = Task.clone(task1);
+
+        Assertions.assertEquals(task1, task2);
+    }
+
+    @Test
     void hashCodeTest() {
         Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
 
@@ -108,24 +171,5 @@ public class TaskTest {
         String expected = task.getClass().getSimpleName() + "{" + "id: " + task.getId() + ", name: " + task.getName() + ", description: " + task.getDescription() + ", status: " + task.getStatus().name() + ", startTime: " + task.getStartTime() + ", duration: " + task.getDuration() + "}";
 
         Assertions.assertEquals(expected, task.toString());
-    }
-
-    @Test
-    public void cloneTaskTest() {
-        Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
-        Task taskClone = Task.clone(task);
-
-        Assertions.assertEquals(task.getId(), taskClone.getId());
-        Assertions.assertEquals(task.getName(), taskClone.getName());
-        Assertions.assertEquals(task.getDescription(), taskClone.getDescription());
-        Assertions.assertEquals(task.getStatus(), taskClone.getStatus());
-    }
-
-    @Test
-    public void compareTwoTasksWithSameIdTest() {
-        Task task1 = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
-        Task task2 = Task.clone(task1);
-
-        Assertions.assertEquals(task1, task2);
     }
 }

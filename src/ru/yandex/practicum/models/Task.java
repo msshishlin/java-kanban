@@ -85,6 +85,16 @@ public class Task extends AbstractTask {
     }
 
     /**
+     * Клонировать задачу.
+     *
+     * @param task задача.
+     * @return клон задачи.
+     */
+    public static Task clone(Task task) {
+        return new Task(task.id, task.name, task.description, task.status, task.startTime, task.duration);
+    }
+
+    /**
      * Проверить пересекается ли другая задача с текущей по времени выполнения.
      *
      * @param otherTask первая задача.
@@ -103,17 +113,7 @@ public class Task extends AbstractTask {
             return true;
         }
 
-        return this.getStartTime().isBefore(otherTask.getStartTime()) && this.getEndTime().isAfter(otherTask.getEndTime());
-    }
-
-    /**
-     * Клонировать задачу.
-     *
-     * @param task задача.
-     * @return клон задачи.
-     */
-    public static Task clone(Task task) {
-        return new Task(task.id, task.name, task.description, task.status, task.startTime, task.duration);
+        return this.getStartTime().isBefore(otherTask.getStartTime()) && this.getEndTime().isAfter(otherTask.getStartTime());
     }
 
     // region Overrides of ru.yandex.practicum.models.AbstractTask

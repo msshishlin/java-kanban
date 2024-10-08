@@ -52,27 +52,27 @@ public final class FileBackedTaskManagerTest {
 
     @Test
     public void loadFromFileTest() throws IOException {
-        Task task1 = new Task("Задача №1", "Описание задачи №1", LocalDateTime.now(), Duration.ofHours(8));
+        Task task1 = new Task("Задача №1", "Описание задачи №1", LocalDateTime.now(), Duration.ofHours(1));
         taskManager.createTask(task1);
 
-        Task task2 = new Task("Задача №2", "Описание задачи №2", LocalDateTime.now(), Duration.ofHours(8));
+        Task task2 = new Task("Задача №2", "Описание задачи №2", LocalDateTime.now().plusHours(1), Duration.ofHours(1));
         taskManager.createTask(task2);
 
         Epic epic1 = new Epic("Эпик №1", "Описание эпика № 1");
         taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now().plusHours(2), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask1);
         taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now().plusHours(3), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask2);
         taskManager.createSubTask(subTask2);
 
         Epic epic2 = new Epic("Эпик №2", "Описание эпика № 2");
         taskManager.createEpic(epic2);
 
-        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now().plusHours(4), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask3);
         taskManager.createSubTask(subTask3);
 
@@ -143,13 +143,13 @@ public final class FileBackedTaskManagerTest {
 
     @Test
     public void getAllTasksTest() throws IOException {
-        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.now(), Duration.ofHours(8));
+        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.now(), Duration.ofHours(1));
         this.taskManager.createTask(task1);
 
-        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.now(), Duration.ofHours(8));
+        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1));
         this.taskManager.createTask(task2);
 
-        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDateTime.now(), Duration.ofHours(8));
+        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDateTime.now().plusHours(2), Duration.ofHours(2));
         this.taskManager.createTask(task3);
 
         Assertions.assertEquals(3, this.taskManager.getAllTasks().size());
@@ -211,13 +211,13 @@ public final class FileBackedTaskManagerTest {
 
     @Test
     public void removeAllTasksTest() throws IOException {
-        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.now(), Duration.ofHours(8));
+        Task task1 = new Task("Задача 1", "Описание задачи 1", LocalDateTime.now(), Duration.ofHours(1));
         this.taskManager.createTask(task1);
 
-        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.now(), Duration.ofHours(8));
+        Task task2 = new Task("Задача 2", "Описание задачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1));
         this.taskManager.createTask(task2);
 
-        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDateTime.now(), Duration.ofHours(8));
+        Task task3 = new Task("Задача 3", "Описание задачи 3", LocalDateTime.now().plusHours(2), Duration.ofHours(1));
         this.taskManager.createTask(task3);
 
         Assertions.assertEquals(3, this.taskManager.getAllTasks().size());
@@ -336,26 +336,26 @@ public final class FileBackedTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now().plusHours(2), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now().plusHours(3), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now().plusHours(4), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -380,26 +380,26 @@ public final class FileBackedTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now().plusHours(2), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now().plusHours(3), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now().plusHours(4), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -490,26 +490,26 @@ public final class FileBackedTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now().plusHours(2), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now().plusHours(3), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now().plusHours(4), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -633,26 +633,26 @@ public final class FileBackedTaskManagerTest {
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1");
         this.taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask1);
         this.taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask2);
         this.taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now().plusHours(2), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask3);
         this.taskManager.createSubTask(subTask3);
 
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2");
         this.taskManager.createEpic(epic2);
 
-        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask4 = new SubTask("Подзадача 4", "Описание подзадачи 4", LocalDateTime.now().plusHours(3), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask4);
         this.taskManager.createSubTask(subTask4);
 
-        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask5 = new SubTask("Подзадача 5", "Описание подзадачи 5", LocalDateTime.now().plusHours(4), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask5);
         this.taskManager.createSubTask(subTask5);
 
@@ -667,7 +667,7 @@ public final class FileBackedTaskManagerTest {
 
     @Test
     public void getHistoryTest() throws IOException {
-        Task task1 = new Task("Задача №1", "Описание задачи №1", LocalDateTime.now(), Duration.ofHours(8));
+        Task task1 = new Task("Задача №1", "Описание задачи №1", LocalDateTime.now(), Duration.ofHours(1));
         taskManager.createTask(task1);
         taskManager.getTaskById(task1.getId());
 
@@ -677,7 +677,7 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertArrayEquals(List.of(task1).toArray(), this.taskManager.getHistory().toArray());
         Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.getFirst());
 
-        Task task2 = new Task("Задача №2", "Описание задачи №2", LocalDateTime.now(), Duration.ofHours(8));
+        Task task2 = new Task("Задача №2", "Описание задачи №2", LocalDateTime.now().plusHours(1), Duration.ofHours(1));
         taskManager.createTask(task2);
         taskManager.getTaskById(task2.getId());
 
@@ -715,7 +715,7 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertEquals(String.join(",", String.valueOf(epic1.getId()), TaskType.EPIC.toString(), epic1.getName(), epic1.getStatus().toString(), epic1.getDescription(), null, null), lines.get(0));
         Assertions.assertEquals(String.join(",", String.valueOf(task1.getId()), TaskType.TASK.toString(), task1.getName(), task1.getStatus().toString(), task1.getDescription(), task1.getStartTime().toString(), task1.getDuration().toString()), lines.get(1));
 
-        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now().plusHours(2), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask1);
         Assertions.assertTrue(epic1.getStartTime().isPresent());
         Assertions.assertTrue(epic1.getDuration().isPresent());
@@ -736,7 +736,7 @@ public final class FileBackedTaskManagerTest {
         Assertions.assertEquals(3, this.taskManager.getHistory().size());
         Assertions.assertArrayEquals(Arrays.asList(task1, subTask1, epic1).toArray(), this.taskManager.getHistory().toArray());
 
-        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now().plusHours(3), Duration.ofHours(1), epic1);
         epic1.addSubTask(subTask2);
         Assertions.assertTrue(epic1.getStartTime().isPresent());
         Assertions.assertTrue(epic1.getDuration().isPresent());
@@ -759,7 +759,7 @@ public final class FileBackedTaskManagerTest {
 
         taskManager.createEpic(epic2);
 
-        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now(), Duration.ofHours(8), epic2);
+        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now().plusHours(4), Duration.ofHours(1), epic2);
         epic2.addSubTask(subTask3);
         Assertions.assertTrue(epic2.getStartTime().isPresent());
         Assertions.assertTrue(epic2.getDuration().isPresent());

@@ -40,6 +40,13 @@ public class EpicTest {
     }
 
     @Test
+    public void addNullInsteadOfSubTaskTest() {
+        Epic epic = new Epic("Эпик", "Описание эпика");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> epic.addSubTask(null));
+    }
+
+    @Test
     public void addSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
@@ -47,13 +54,6 @@ public class EpicTest {
         epic.addSubTask(subTask);
 
         Assertions.assertEquals(subTask, epic.getAllSubTasks().getFirst());
-    }
-
-    @Test
-    public void addNullInsteadSubTaskTest() {
-        Epic epic = new Epic("Эпик", "Описание эпика");
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> epic.addSubTask(null));
     }
 
     @Test
@@ -110,6 +110,13 @@ public class EpicTest {
     }
 
     @Test
+    public void updateNullInsteadOfSubTaskTest() {
+        Epic epic = new Epic("Эпик", "Описание эпика");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> epic.updateSubTask(null));
+    }
+
+    @Test
     public void updateSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
@@ -124,13 +131,6 @@ public class EpicTest {
         epic.updateSubTask(subTaskClone);
 
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, epic.getAllSubTasks().getFirst().getStatus());
-    }
-
-    @Test
-    public void updateNullInsteadSubTaskTest() {
-        Epic epic = new Epic("Эпик", "Описание эпика");
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> epic.updateSubTask(null));
     }
 
     @Test
@@ -152,24 +152,21 @@ public class EpicTest {
     }
 
     @Test
+    public void removeNullInsteadOfSubTaskTest() {
+        Epic epic = new Epic("Эпик", "Описание эпика");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> epic.removeSubTask(null));
+    }
+
+    @Test
     public void removeSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
         SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
-
-        Assertions.assertEquals(1, epic.getAllSubTasks().size());
-
         epic.removeSubTask(subTask);
 
         Assertions.assertEquals(0, epic.getAllSubTasks().size());
-    }
-
-    @Test
-    public void removeNullInsteadOfSubTaskTest() {
-        Epic epic = new Epic("Эпик", "Описание эпика");
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> epic.removeSubTask(null));
     }
 
     @Test
@@ -203,15 +200,13 @@ public class EpicTest {
         SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask3);
 
-        Assertions.assertEquals(3, epic.getAllSubTasks().size());
-
         epic.removeAllSubTasks();
 
         Assertions.assertEquals(0, epic.getAllSubTasks().size());
     }
 
     @Test
-    public void updateStatusTest() {
+    public void getStatusTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
         Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
 
@@ -242,8 +237,72 @@ public class EpicTest {
     }
 
     @Test
+    public void getStartTimeTest() {
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        Assertions.assertTrue(epic.getStartTime().isEmpty());
+
+        LocalDateTime startTime = LocalDateTime.now();
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", startTime, Duration.ofHours(1), epic);
+        epic.addSubTask(subTask1);
+
+        Assertions.assertTrue(epic.getStartTime().isPresent());
+        Assertions.assertEquals(startTime, epic.getStartTime().get());
+
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", startTime.plusHours(1), Duration.ofHours(1), epic);
+        epic.addSubTask(subTask2);
+
+        Assertions.assertTrue(epic.getStartTime().isPresent());
+        Assertions.assertEquals(startTime, epic.getStartTime().get());
+    }
+
+    @Test
+    public void getDurationTest() {
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        Assertions.assertTrue(epic.getDuration().isEmpty());
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(1), epic);
+        epic.addSubTask(subTask1);
+
+        Assertions.assertTrue(epic.getDuration().isPresent());
+        Assertions.assertEquals(1, epic.getDuration().get().toHours());
+
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1), epic);
+        epic.addSubTask(subTask2);
+
+        Assertions.assertTrue(epic.getDuration().isPresent());
+        Assertions.assertEquals(2, epic.getDuration().get().toHours());
+    }
+
+    @Test
+    public void getEndTimeTest() {
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        Assertions.assertTrue(epic.getEndTime().isEmpty());
+
+        LocalDateTime startTime = LocalDateTime.now();
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", startTime, Duration.ofHours(1), epic);
+        epic.addSubTask(subTask1);
+
+        Assertions.assertTrue(epic.getEndTime().isPresent());
+        Assertions.assertEquals(startTime.plusHours(1), epic.getEndTime().get());
+
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", startTime.plusHours(1), Duration.ofHours(5), epic);
+        epic.addSubTask(subTask2);
+
+        Assertions.assertTrue(epic.getEndTime().isPresent());
+        Assertions.assertEquals(startTime.plusHours(6), epic.getEndTime().get());
+    }
+
+    @Test
     public void toStringTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
+
+        Assertions.assertTrue(epic.getStartTime().isEmpty());
+        Assertions.assertTrue(epic.getDuration().isEmpty());
+
+        String expected = epic.getClass().getSimpleName() + "{" + "id: " + epic.getId() + ", name: " + epic.getName() + ", description: " + epic.getDescription() + ", status: " + epic.getStatus().name() + ", startTime: null" + ", duration: null" + ", sub_task_count: " + epic.getAllSubTasks().size() + "}";
+        Assertions.assertEquals(expected, epic.toString());
 
         SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
@@ -251,8 +310,7 @@ public class EpicTest {
         Assertions.assertTrue(epic.getStartTime().isPresent());
         Assertions.assertTrue(epic.getDuration().isPresent());
 
-        String expected = epic.getClass().getSimpleName() + "{" + "id: " + epic.getId() + ", name: " + epic.getName() + ", description: " + epic.getDescription() + ", status: " + epic.getStatus().name() + ", startTime: " + epic.getStartTime().get() + ", duration: " + epic.getDuration().get() + ", sub_task_count: " + epic.getAllSubTasks().size() + "}";
-
+        expected = epic.getClass().getSimpleName() + "{" + "id: " + epic.getId() + ", name: " + epic.getName() + ", description: " + epic.getDescription() + ", status: " + epic.getStatus().name() + ", startTime: " + epic.getStartTime().get() + ", duration: " + epic.getDuration().get() + ", sub_task_count: " + epic.getAllSubTasks().size() + "}";
         Assertions.assertEquals(expected, epic.toString());
     }
 

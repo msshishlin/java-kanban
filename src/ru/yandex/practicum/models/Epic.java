@@ -76,7 +76,7 @@ public final class Epic extends AbstractTask {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже добавлена в эпик");
         }
 
-        if (subTask.getEpic() != null && subTask.getEpic().getId() != this.id) {
+        if (subTask.getEpic().getId() != this.id) {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже связана с другим эпиком");
         }
 
