@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 //endregion
@@ -89,8 +90,8 @@ public final class Epic extends AbstractTask {
      * @param subTaskId идентификатор подзадачи.
      * @return подзадача.
      */
-    public SubTask getSubTaskById(int subTaskId) {
-        return this.subTasks.get(subTaskId);
+    public Optional<SubTask> getSubTaskById(int subTaskId) {
+        return Optional.ofNullable(this.subTasks.get(subTaskId));
     }
 
     /**
@@ -98,7 +99,7 @@ public final class Epic extends AbstractTask {
      *
      * @return коллекция подзадач.
      */
-    public ArrayList<SubTask> getAllSubTasks() {
+    public List<SubTask> getAllSubTasks() {
         return new ArrayList<>(this.subTasks.values());
     }
 

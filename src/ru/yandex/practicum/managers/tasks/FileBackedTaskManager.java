@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 // endregion
 
@@ -76,10 +77,13 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                         Duration duration = Duration.parse(parts[6]);
                         int epicId = Integer.parseInt(parts[7]);
 
-                        Epic epic = taskManager.getEpicById(epicId);
+                        Optional<Epic> epic = taskManager.getEpicById(epicId);
+                        if (epic.isEmpty()) {
+                            break;
+                        }
 
-                        SubTask subTask = new SubTask(id, name, description, status, startTime, duration, epic);
-                        epic.addSubTask(subTask);
+                        SubTask subTask = new SubTask(id, name, description, status, startTime, duration, epic.get());
+                        epic.get().addSubTask(subTask);
 
                         taskManager.createSubTask(subTask);
                         break;

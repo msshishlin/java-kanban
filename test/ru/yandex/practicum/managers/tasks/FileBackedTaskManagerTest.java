@@ -150,12 +150,13 @@ public final class FileBackedTaskManagerTest {
         Task task = new Task("Задача", "Описание задачи", LocalDateTime.now(), Duration.ofHours(8));
         this.taskManager.createTask(task);
 
-        Assertions.assertEquals(task, this.taskManager.getTaskById(task.getId()));
+        Assertions.assertTrue(this.taskManager.getTaskById(task.getId()).isPresent());
+        Assertions.assertEquals(task, this.taskManager.getTaskById(task.getId()).get());
     }
 
     @Test
     public void getUnknownTaskTest() {
-        Assertions.assertNull(this.taskManager.getTaskById(5));
+        Assertions.assertTrue(this.taskManager.getTaskById(5).isEmpty());
     }
 
     @Test
@@ -190,7 +191,8 @@ public final class FileBackedTaskManagerTest {
 
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
-        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getTaskById(task.getId()).getStatus());
+        Assertions.assertTrue(this.taskManager.getTaskById(task.getId()).isPresent());
+        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getTaskById(task.getId()).get().getStatus());
         Assertions.assertEquals(String.join(",", String.valueOf(taskClone.getId()), TaskType.TASK.toString(), taskClone.getName(), taskClone.getStatus().toString(), taskClone.getDescription(), taskClone.getStartTime().toString(), taskClone.getDuration().toString()), lines.getFirst());
     }
 
@@ -340,12 +342,13 @@ public final class FileBackedTaskManagerTest {
 
         this.taskManager.createSubTask(subTask);
 
-        Assertions.assertEquals(subTask, this.taskManager.getSubTaskById(subTask.getId()));
+        Assertions.assertTrue(this.taskManager.getSubTaskById(subTask.getId()).isPresent());
+        Assertions.assertEquals(subTask, this.taskManager.getSubTaskById(subTask.getId()).get());
     }
 
     @Test
     public void getUnknownSubTaskTest() {
-        Assertions.assertNull(this.taskManager.getSubTaskById(5));
+        Assertions.assertTrue(this.taskManager.getSubTaskById(5).isEmpty());
     }
 
     @Test
@@ -453,10 +456,14 @@ public final class FileBackedTaskManagerTest {
 
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
-        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getSubTaskById(subTask.getId()).getStatus());
-        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getEpicById(epic.getId()).getSubTaskById(subTask.getId()).getStatus());
+        Assertions.assertTrue(this.taskManager.getSubTaskById(subTask.getId()).isPresent());
+        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getSubTaskById(subTask.getId()).get().getStatus());
 
-        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getEpicById(epic.getId()).getStatus());
+        Assertions.assertTrue(this.taskManager.getEpicById(epic.getId()).isPresent());
+        Assertions.assertTrue(this.taskManager.getEpicById(epic.getId()).get().getSubTaskById(subTask.getId()).isPresent());
+        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getEpicById(epic.getId()).get().getSubTaskById(subTask.getId()).get().getStatus());
+
+        Assertions.assertEquals(TaskStatus.IN_PROGRESS, this.taskManager.getEpicById(epic.getId()).get().getStatus());
 
         Assertions.assertTrue(epic.getStartTime().isPresent());
         Assertions.assertTrue(epic.getDuration().isPresent());
@@ -493,7 +500,10 @@ public final class FileBackedTaskManagerTest {
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
         Assertions.assertEquals(0, this.taskManager.getAllSubTasks().size());
-        Assertions.assertEquals(0, this.taskManager.getEpicById(epic.getId()).getAllSubTasks().size());
+
+        Assertions.assertTrue(this.taskManager.getEpicById(epic.getId()).isPresent());
+        Assertions.assertEquals(0, this.taskManager.getEpicById(epic.getId()).get().getAllSubTasks().size());
+
         Assertions.assertEquals(String.join(",", String.valueOf(epic.getId()), TaskType.EPIC.toString(), epic.getName(), epic.getStatus().toString(), epic.getDescription(), null, null), lines.getFirst());
     }
 
@@ -535,8 +545,13 @@ public final class FileBackedTaskManagerTest {
         List<String> lines = Files.readAllLines(this.storage.toPath(), StandardCharsets.UTF_8);
 
         Assertions.assertEquals(0, this.taskManager.getAllSubTasks().size());
-        Assertions.assertEquals(0, this.taskManager.getEpicById(epic1.getId()).getAllSubTasks().size());
-        Assertions.assertEquals(0, this.taskManager.getEpicById(epic2.getId()).getAllSubTasks().size());
+
+        Assertions.assertTrue(this.taskManager.getEpicById(epic1.getId()).isPresent());
+        Assertions.assertEquals(0, this.taskManager.getEpicById(epic1.getId()).get().getAllSubTasks().size());
+
+        Assertions.assertTrue(this.taskManager.getEpicById(epic2.getId()).isPresent());
+        Assertions.assertEquals(0, this.taskManager.getEpicById(epic2.getId()).get().getAllSubTasks().size());
+
         Assertions.assertEquals(String.join(",", String.valueOf(epic1.getId()), TaskType.EPIC.toString(), epic1.getName(), epic1.getStatus().toString(), epic1.getDescription(), null, null), lines.get(0));
         Assertions.assertEquals(String.join(",", String.valueOf(epic2.getId()), TaskType.EPIC.toString(), epic2.getName(), epic2.getStatus().toString(), epic2.getDescription(), null, null), lines.get(1));
     }
@@ -570,12 +585,13 @@ public final class FileBackedTaskManagerTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         this.taskManager.createEpic(epic);
 
-        Assertions.assertEquals(epic, this.taskManager.getEpicById(epic.getId()));
+        Assertions.assertTrue(this.taskManager.getEpicById(epic.getId()).isPresent());
+        Assertions.assertEquals(epic, this.taskManager.getEpicById(epic.getId()).get());
     }
 
     @Test
     public void getUnknownEpicTest() {
-        Assertions.assertNull(this.taskManager.getEpicById(5));
+        Assertions.assertTrue(this.taskManager.getEpicById(5).isEmpty());
     }
 
     @Test

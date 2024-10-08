@@ -82,14 +82,14 @@ public class InMemoryTaskManager implements TaskManager {
      * @return задача.
      */
     @Override
-    public Task getTaskById(int taskId) {
+    public Optional<Task> getTaskById(int taskId) {
         Task task = this.tasks.get(taskId);
 
         if (task != null) {
             this.historyManager.add(taskId, task);
         }
 
-        return task;
+        return Optional.ofNullable(task);
     }
 
     /**
@@ -178,7 +178,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Создание подзадачи возможно только после создания эпика");
         }
 
-        if (this.epics.get(subTask.getEpic().getId()).getSubTaskById(subTask.getId()) == null) {
+        if (this.epics.get(subTask.getEpic().getId()).getSubTaskById(subTask.getId()).isEmpty()) {
             throw new IllegalStateException("Создание подзадачи возможно только после её добавления в эпик");
         }
 
@@ -192,14 +192,14 @@ public class InMemoryTaskManager implements TaskManager {
      * @return подзадача.
      */
     @Override
-    public SubTask getSubTaskById(int subTaskId) {
+    public Optional<SubTask> getSubTaskById(int subTaskId) {
         SubTask subTask = this.subTasks.get(subTaskId);
 
         if (subTask != null) {
             this.historyManager.add(subTaskId, subTask);
         }
 
-        return subTask;
+        return Optional.ofNullable(subTask);
     }
 
     /**
@@ -210,10 +210,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<SubTask> getSubTasksByEpic(Epic epic) {
-        return this.subTasks.values()
-                            .stream()
-                            .filter(st -> st.getEpic().equals(epic))
-                            .toList();
+        return this.subTasks.values().stream().filter(st -> st.getEpic().equals(epic)).toList();
     }
 
     /**
@@ -247,7 +244,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Удалить подзадачу по её идентификаторку.
+     * Удалить подзадачу по её идентификатору.
      *
      * @param subTaskId идентификатор подзадачи
      */
@@ -328,14 +325,14 @@ public class InMemoryTaskManager implements TaskManager {
      * @return эпик.
      */
     @Override
-    public Epic getEpicById(int epicId) {
+    public Optional<Epic> getEpicById(int epicId) {
         Epic epic = this.epics.get(epicId);
 
         if (epic != null) {
             this.historyManager.add(epicId, epic);
         }
 
-        return epic;
+        return Optional.ofNullable(epic);
     }
 
     /**

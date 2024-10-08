@@ -83,14 +83,15 @@ public class EpicTest {
         SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
-        Assertions.assertEquals(subTask, epic.getSubTaskById(subTask.getId()));
+        Assertions.assertTrue(epic.getSubTaskById(subTask.getId()).isPresent());
+        Assertions.assertEquals(subTask, epic.getSubTaskById(subTask.getId()).get());
     }
 
     @Test
     public void getUnknownSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        Assertions.assertNull(epic.getSubTaskById(5));
+        Assertions.assertTrue(epic.getSubTaskById(5).isEmpty());
     }
 
     @Test
