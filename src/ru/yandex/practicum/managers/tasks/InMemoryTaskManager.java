@@ -17,6 +17,11 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     /**
+     * Список задач/подзадач, упорядоченных по определенному правилу.
+     */
+    public final TreeSet<Task> prioritizedTasks;
+
+    /**
      * Список задач.
      */
     public final HashMap<Integer, Task> tasks;
@@ -40,6 +45,8 @@ public class InMemoryTaskManager implements TaskManager {
      * Конструктор.
      */
     public InMemoryTaskManager() {
+        this.prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+
         this.tasks = new LinkedHashMap<>();
         this.subTasks = new LinkedHashMap<>();
         this.epics = new LinkedHashMap<>();
@@ -72,6 +79,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Задача с идентификатором " + task.getId() + " пересекается с другой задачей по времени выполнения");
         }
 
+        this.prioritizedTasks.add(task);
         this.tasks.put(task.getId(), task);
     }
 
@@ -117,6 +125,8 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Задача с идентификатором " + task.getId() + " не найден");
         }
 
+        this.prioritizedTasks.remove(task);
+        this.prioritizedTasks.add(task);
         this.tasks.put(task.getId(), task);
     }
 
@@ -132,6 +142,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         this.historyManager.remove(taskId);
+        this.prioritizedTasks.remove(this.tasks.get(taskId));
         this.tasks.remove(taskId);
     }
 
@@ -140,8 +151,9 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void removeAllTasks() {
-        for (Integer taskId : this.tasks.keySet()) {
-            this.historyManager.remove(taskId);
+        for (Task task : this.tasks.values()) {
+            this.historyManager.remove(task.getId());
+            this.prioritizedTasks.remove(task);
         }
 
         this.tasks.clear();
@@ -182,6 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Создание подзадачи возможно только после её добавления в эпик");
         }
 
+        this.prioritizedTasks.add(subTask);
         this.subTasks.put(subTask.getId(), subTask);
     }
 
@@ -240,6 +253,8 @@ public class InMemoryTaskManager implements TaskManager {
 
         subTask.getEpic().updateSubTask(subTask);
 
+        this.prioritizedTasks.remove(subTask);
+        this.prioritizedTasks.add(subTask);
         this.subTasks.put(subTask.getId(), subTask);
     }
 
@@ -259,6 +274,7 @@ public class InMemoryTaskManager implements TaskManager {
         subTask.getEpic().removeSubTask(subTask);
 
         this.historyManager.remove(subTaskId);
+        this.prioritizedTasks.remove(this.subTasks.get(subTaskId));
         this.subTasks.remove(subTaskId);
     }
 
@@ -273,6 +289,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.removeSubTask(subTask);
 
             this.historyManager.remove(subTask.getId());
+            this.prioritizedTasks.remove(subTask);
         }
 
         this.subTasks.clear();
@@ -282,20 +299,13 @@ public class InMemoryTaskManager implements TaskManager {
     //endregion
 
     /**
-     * Получить список задач в порядке приоритета.
+     * Получить список задач/подзадач, упорядоченных по определенному правилу.
      *
      * @return список задач.
      */
     @Override
-    public List<Task> getPrioritizedTasks() {
-        ArrayList<Task> result = new ArrayList<>();
-
-        result.addAll(this.tasks.values().stream().filter(t -> t.getStartTime() != null).toList());
-        result.addAll(this.subTasks.values().stream().filter(st -> st.getStartTime() != null).toList());
-
-        result.sort(Comparator.comparing(Task::getStartTime));
-
-        return result;
+    public TreeSet<Task> getPrioritizedTasks() {
+        return this.prioritizedTasks;
     }
 
     // region Эпики

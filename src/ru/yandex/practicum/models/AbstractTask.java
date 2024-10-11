@@ -4,6 +4,8 @@ package ru.yandex.practicum.models;
 
 import ru.yandex.practicum.constants.TaskStatus;
 
+import java.util.Objects;
+
 // endregion
 
 /**
@@ -126,4 +128,22 @@ public abstract class AbstractTask {
      * @return объект задачи в виде строки в формате CSV.
      */
     public abstract String toCsvString();
+
+    // region Overrides of java.lang.Object
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || this.getClass() != obj.getClass()) return false;
+
+        AbstractTask otherTask = (AbstractTask) obj;
+        return this.id == otherTask.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.id);
+    }
+
+    // endregion
 }

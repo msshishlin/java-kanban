@@ -7,7 +7,6 @@ import ru.yandex.practicum.constants.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 //endregion
 
@@ -187,20 +186,6 @@ public class Task extends AbstractTask {
     // endregion
 
     // region Overrides of java.lang.Object
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || this.getClass() != obj.getClass()) return false;
-
-        Task otherTask = (Task) obj;
-        return this.id == otherTask.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(this.id);
-    }
 
     @Override
     public String toString() {

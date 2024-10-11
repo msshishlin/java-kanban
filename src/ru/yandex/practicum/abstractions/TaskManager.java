@@ -9,6 +9,7 @@ import ru.yandex.practicum.models.Task;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeSet;
 
 // endregion
 
@@ -112,11 +113,11 @@ public interface TaskManager {
     //endregion
 
     /**
-     * Получить список задач в порядке приоритета.
+     * Получить список задач/подзадач, упорядоченных по определенному правилу.
      *
      * @return список задач.
      */
-    List<Task> getPrioritizedTasks();
+    TreeSet<Task> getPrioritizedTasks();
 
     // region Эпики
 
