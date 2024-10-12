@@ -6,36 +6,53 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.constants.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 // endregion
 
 public class SubTaskTest {
     @Test
     public void createSubTaskTest() {
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.ofHours(8);
+
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask1 = new SubTask("Подзадача", "Описание подзадачи", now, duration, epic);
 
-        Assertions.assertEquals("Подзадача", subTask.getName());
-        Assertions.assertEquals("Описание подзадачи", subTask.getDescription());
-        Assertions.assertEquals(TaskStatus.NEW, subTask.getStatus());
-        Assertions.assertEquals(epic, subTask.getEpic());
+        Assertions.assertEquals("Подзадача", subTask1.getName());
+        Assertions.assertEquals("Описание подзадачи", subTask1.getDescription());
+        Assertions.assertEquals(TaskStatus.NEW, subTask1.getStatus());
+        Assertions.assertEquals(now, subTask1.getStartTime());
+        Assertions.assertEquals(duration, subTask1.getDuration());
+        Assertions.assertEquals(epic, subTask1.getEpic());
+
+        SubTask subTask2 = new SubTask(5, "Подзадача", "Описание подзадачи", TaskStatus.IN_PROGRESS, now, duration, epic);
+
+        Assertions.assertEquals(5, subTask2.getId());
+        Assertions.assertEquals("Подзадача", subTask2.getName());
+        Assertions.assertEquals("Описание подзадачи", subTask2.getDescription());
+        Assertions.assertEquals(TaskStatus.IN_PROGRESS, subTask2.getStatus());
+        Assertions.assertEquals(now, subTask2.getStartTime());
+        Assertions.assertEquals(duration, subTask2.getDuration());
+        Assertions.assertEquals(epic, subTask2.getEpic());
     }
 
     @Test
     public void createSubTaskWithoutEpicTest() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new SubTask("Подзадача", "Описание подзадачи", null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new SubTask(5, "Подзадача", "Описание подзадачи", TaskStatus.NEW, LocalDateTime.now(), Duration.ofHours(8), null));
     }
 
     @Test
     public void toStringTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
         epic.addSubTask(subTask);
 
-        String expected = subTask.getClass().getSimpleName() + "{" + "id: " + subTask.getId() + ", " + "name: "
-                + subTask.getName() + ", " + "description: " + subTask.getDescription() + ", " + "status: "
-                + subTask.getStatus().name() + ", " + "epic: " + subTask.getEpic() + "}";
+        String expected = subTask.getClass().getSimpleName() + "{" + "id: " + subTask.getId() + ", name: " + subTask.getName() + ", description: " + subTask.getDescription() + ", status: " + subTask.getStatus().name() + ", startTime: " + subTask.getStartTime() + ", duration: " + subTask.getDuration() + ", epic: " + subTask.getEpic() + "}";
 
         Assertions.assertEquals(expected, subTask.toString());
     }
@@ -44,8 +61,8 @@ public class SubTaskTest {
     public void cloneSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", epic);
-        SubTask subTaskClone = subTask.clone();
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTaskClone = SubTask.clone(subTask);
 
         Assertions.assertEquals(subTask.getId(), subTaskClone.getId());
         Assertions.assertEquals(subTask.getName(), subTaskClone.getName());

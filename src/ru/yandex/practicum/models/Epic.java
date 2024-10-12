@@ -5,15 +5,19 @@ package ru.yandex.practicum.models;
 import ru.yandex.practicum.constants.TaskStatus;
 import ru.yandex.practicum.constants.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 //endregion
 
 /**
  * Эпик.
  */
-public final class Epic extends Task {
+public final class Epic extends AbstractTask {
     /**
      * Коллекция подзадач.
      */
@@ -37,13 +41,26 @@ public final class Epic extends Task {
      * @param id          идентификатор задачи.
      * @param name        название задачи.
      * @param description описание задачи.
-     * @param status      статус задачи.
      * @param subTasks    коллекция подзадач.
      */
-    public Epic(int id, String name, String description, TaskStatus status, HashMap<Integer, SubTask> subTasks) {
-        super(id, name, description, status);
+    public Epic(int id, String name, String description, HashMap<Integer, SubTask> subTasks) {
+        super(id, name, description);
+
+        if (subTasks == null) {
+            throw new IllegalArgumentException("Parameter 'subTasks' can't be null");
+        }
 
         this.subTasks = subTasks;
+    }
+
+    /**
+     * Клонировать эпик.
+     *
+     * @param epic эпик.
+     * @return клон эпика.
+     */
+    public static Epic clone(Epic epic) {
+        return new Epic(epic.id, epic.name, epic.description, epic.subTasks);
     }
 
     /**
@@ -60,7 +77,7 @@ public final class Epic extends Task {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже добавлена в эпик");
         }
 
-        if (subTask.getEpic() != null && subTask.getEpic().getId() != this.id) {
+        if (subTask.getEpic().getId() != this.id) {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + "уже связана с другим эпиком");
         }
 
@@ -73,8 +90,8 @@ public final class Epic extends Task {
      * @param subTaskId идентификатор подзадачи.
      * @return подзадача.
      */
-    public SubTask getSubTaskById(int subTaskId) {
-        return this.subTasks.get(subTaskId);
+    public Optional<SubTask> getSubTaskById(int subTaskId) {
+        return Optional.ofNullable(this.subTasks.get(subTaskId));
     }
 
     /**
@@ -82,7 +99,7 @@ public final class Epic extends Task {
      *
      * @return коллекция подзадач.
      */
-    public ArrayList<SubTask> getAllSubTasks() {
+    public List<SubTask> getAllSubTasks() {
         return new ArrayList<>(this.subTasks.values());
     }
 
@@ -127,13 +144,17 @@ public final class Epic extends Task {
         this.subTasks.clear();
     }
 
+    // region Overrides of ru.yandex.practicum.models.AbstractTask
+
     /**
-     * Обновить статус эпика.
+     * Получить статус задачи.
+     *
+     * @return статус задачи.
      */
-    public void updateStatus() {
+    @Override
+    public TaskStatus getStatus() {
         if (this.subTasks.isEmpty()) {
-            this.status = TaskStatus.NEW;
-            return;
+            return TaskStatus.NEW;
         }
 
         int newCount = 0;
@@ -151,15 +172,58 @@ public final class Epic extends Task {
         }
 
         if (newCount == this.subTasks.size()) {
-            this.status = TaskStatus.NEW;
+            return TaskStatus.NEW;
         } else if (doneCount == this.subTasks.size()) {
-            this.status = TaskStatus.DONE;
+            return TaskStatus.DONE;
         } else {
-            this.status = TaskStatus.IN_PROGRESS;
+            return TaskStatus.IN_PROGRESS;
         }
     }
 
-    // region Overrides of ru.yandex.practicum.models.Task
+    /**
+     * Получить дату и время, когда предполагается приступить к выполнению задачи.
+     *
+     * @return дата и время, когда предполагается приступить к выполнению задачи.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Optional<LocalDateTime> getStartTime() {
+        if (this.subTasks.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return this.subTasks.values().stream().map(st -> st.startTime).min(LocalDateTime::compareTo);
+    }
+
+    /**
+     * Получить продолжительность задачи - оценка того, сколько времени она займёт в минутах.
+     *
+     * @return продолжительность задачи - оценка того, сколько времени она займёт в минутах.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Optional<Duration> getDuration() {
+        if (this.subTasks.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return this.subTasks.values().stream().map(st -> st.duration).reduce(Duration::plus);
+    }
+
+    /**
+     * Получить дату и время завершения задачи
+     *
+     * @return дата и время завершения задачи.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Optional<LocalDateTime> getEndTime() {
+        if (this.subTasks.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return this.subTasks.values().stream().map(Task::getEndTime).max(LocalDateTime::compareTo);
+    }
 
     /**
      * Преобразовать объект эпика в строку в формате CSV.
@@ -168,7 +232,21 @@ public final class Epic extends Task {
      */
     @Override
     public String toCsvString() {
-        return String.join(",", String.valueOf(this.id), TaskType.EPIC.name(), this.name, this.status.name(), this.description);
+        String startTimeString;
+        if (this.getStartTime().isEmpty()) {
+            startTimeString = null;
+        } else {
+            startTimeString = this.getStartTime().get().toString();
+        }
+
+        String durationString;
+        if (this.getDuration().isEmpty()) {
+            durationString = null;
+        } else {
+            durationString = this.getDuration().get().toString();
+        }
+
+        return String.join(",", String.valueOf(this.id), TaskType.EPIC.name(), this.name, this.getStatus().name(), this.description, startTimeString, durationString);
     }
 
     // endregion
@@ -177,17 +255,22 @@ public final class Epic extends Task {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", " + "name: " + this.name + ", " + "description: " + this.description + ", " + "status: " + this.status.name() + ", " + "sub_task_count: " + this.subTasks.size() + "}";
+        String startTimeString;
+        if (this.getStartTime().isEmpty()) {
+            startTimeString = null;
+        } else {
+            startTimeString = this.getStartTime().get().toString();
+        }
+
+        String durationString;
+        if (this.getDuration().isEmpty()) {
+            durationString = null;
+        } else {
+            durationString = this.getDuration().get().toString();
+        }
+
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", name: " + this.name + ", description: " + this.description + ", status: " + this.getStatus().name() + ", startTime: " + startTimeString + ", duration: " + durationString + ", sub_task_count: " + this.subTasks.size() + "}";
     }
-
-    // region Implements of Cloneable
-
-    @Override
-    public Epic clone() {
-        return new Epic(this.id, this.name, this.description, this.status, this.subTasks);
-    }
-
-    // endregion
 
     // endregion
 }

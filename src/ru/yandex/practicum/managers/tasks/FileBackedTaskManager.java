@@ -15,8 +15,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 // endregion
 
@@ -59,9 +62,8 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                         int id = Integer.parseInt(parts[0]);
                         String name = parts[2];
                         String description = parts[4];
-                        TaskStatus status = TaskStatus.valueOf(parts[3]);
 
-                        Epic epic = new Epic(id, name, description, status, new HashMap<>());
+                        Epic epic = new Epic(id, name, description, new HashMap<>());
 
                         taskManager.createEpic(epic);
                         break;
@@ -71,12 +73,17 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                         String name = parts[2];
                         String description = parts[4];
                         TaskStatus status = TaskStatus.valueOf(parts[3]);
-                        int epicId = Integer.parseInt(parts[5]);
+                        LocalDateTime startTime = LocalDateTime.parse(parts[5]);
+                        Duration duration = Duration.parse(parts[6]);
+                        int epicId = Integer.parseInt(parts[7]);
 
-                        Epic epic = taskManager.getEpicById(epicId);
+                        Optional<Epic> epic = taskManager.getEpicById(epicId);
+                        if (epic.isEmpty()) {
+                            break;
+                        }
 
-                        SubTask subTask = new SubTask(id, name, description, status, epic);
-                        epic.addSubTask(subTask);
+                        SubTask subTask = new SubTask(id, name, description, status, startTime, duration, epic.get());
+                        epic.get().addSubTask(subTask);
 
                         taskManager.createSubTask(subTask);
                         break;
@@ -86,8 +93,10 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                         String name = parts[2];
                         String description = parts[4];
                         TaskStatus status = TaskStatus.valueOf(parts[3]);
+                        LocalDateTime startTime = LocalDateTime.parse(parts[5]);
+                        Duration duration = Duration.parse(parts[6]);
 
-                        Task task = new Task(id, name, description, status);
+                        Task task = new Task(id, name, description, status, startTime, duration);
 
                         taskManager.createTask(task);
                         break;

@@ -2,12 +2,14 @@ package ru.yandex.practicum.abstractions;
 
 // region imports
 
+import ru.yandex.practicum.models.AbstractTask;
 import ru.yandex.practicum.models.Epic;
 import ru.yandex.practicum.models.SubTask;
 import ru.yandex.practicum.models.Task;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
 
 // endregion
 
@@ -27,14 +29,14 @@ public interface TaskManager {
      * @param taskId идентификатор задачи.
      * @return задача.
      */
-    Task getTaskById(int taskId);
+    Optional<Task> getTaskById(int taskId);
 
     /**
      * Получить все задачи.
      *
      * @return коллекция задач.
      */
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     /**
      * Обновить задачу.
@@ -72,7 +74,7 @@ public interface TaskManager {
      * @param subTaskId идентификатор подзадачи.
      * @return подзадача.
      */
-    SubTask getSubTaskById(int subTaskId);
+    Optional<SubTask> getSubTaskById(int subTaskId);
 
     /**
      * Получить коллекцию подзадач эпика.
@@ -80,14 +82,14 @@ public interface TaskManager {
      * @param epic эпик.
      * @return коллекция подзадач.
      */
-    ArrayList<SubTask> getSubTasksByEpic(Epic epic);
+    List<SubTask> getSubTasksByEpic(Epic epic);
 
     /**
      * Получить все подзадачи.
      *
      * @return коллекция подзадач.
      */
-    ArrayList<SubTask> getAllSubTasks();
+    List<SubTask> getAllSubTasks();
 
     /**
      * Обновить подзадачу.
@@ -110,6 +112,13 @@ public interface TaskManager {
 
     //endregion
 
+    /**
+     * Получить список задач/подзадач, упорядоченных по определенному правилу.
+     *
+     * @return список задач.
+     */
+    TreeSet<Task> getPrioritizedTasks();
+
     // region Эпики
 
     /**
@@ -125,14 +134,14 @@ public interface TaskManager {
      * @param epicId идентификатор эпика.
      * @return эпик.
      */
-    Epic getEpicById(int epicId);
+    Optional<Epic> getEpicById(int epicId);
 
     /**
      * Получить все эпики.
      *
      * @return коллекция эпиков.
      */
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     /**
      * Обновить эпик.
@@ -159,9 +168,10 @@ public interface TaskManager {
 
     /**
      * Получить историю просмотра задач.
+     *
      * @return история просмотра задач.
      */
-    List<Task> getHistory();
+    List<AbstractTask> getHistory();
 
     // endregion
 }
