@@ -50,7 +50,7 @@ public class EpicTest {
     public void addSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask);
 
         Assertions.assertEquals(subTask, epic.getAllSubTasks().getFirst());
@@ -60,7 +60,7 @@ public class EpicTest {
     public void addSubTaskTwiceTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask);
 
         Assertions.assertThrows(IllegalStateException.class, () -> epic.addSubTask(subTask));
@@ -71,7 +71,7 @@ public class EpicTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         Epic anotherEpic = new Epic("Другой эпик", "Описание другого эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), anotherEpic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), anotherEpic.getId());
 
         Assertions.assertThrows(IllegalStateException.class, () -> epic.addSubTask(subTask));
     }
@@ -80,7 +80,7 @@ public class EpicTest {
     public void getSubTaskByIdTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask);
 
         Assertions.assertTrue(epic.getSubTaskById(subTask.getId()).isPresent());
@@ -98,13 +98,13 @@ public class EpicTest {
     public void getAllSubTasksTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask3);
 
         Assertions.assertEquals(3, epic.getAllSubTasks().size());
@@ -121,7 +121,7 @@ public class EpicTest {
     public void updateSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask);
 
         Assertions.assertEquals(TaskStatus.NEW, epic.getAllSubTasks().getFirst().getStatus());
@@ -137,7 +137,7 @@ public class EpicTest {
     @Test
     public void updateUnknownSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
 
         Assertions.assertThrows(IllegalStateException.class, () -> epic.updateSubTask(subTask));
     }
@@ -147,7 +147,7 @@ public class EpicTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         Epic anotherEpic = new Epic("Другой эпик", "Описание другого эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), anotherEpic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), anotherEpic.getId());
 
         Assertions.assertThrows(IllegalStateException.class, () -> epic.updateSubTask(subTask));
     }
@@ -163,7 +163,7 @@ public class EpicTest {
     public void removeSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask);
         epic.removeSubTask(subTask);
 
@@ -173,7 +173,7 @@ public class EpicTest {
     @Test
     public void removeUnknownSubTaskTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
 
         Assertions.assertThrows(IllegalStateException.class, () -> epic.removeSubTask(subTask));
     }
@@ -183,7 +183,7 @@ public class EpicTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         Epic anotherEpic = new Epic("Другой эпик", "Описание другого эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), anotherEpic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), anotherEpic.getId());
 
         Assertions.assertThrows(IllegalStateException.class, () -> epic.removeSubTask(subTask));
     }
@@ -192,13 +192,13 @@ public class EpicTest {
     public void removeAllSubTasksTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask3 = new SubTask("Подзадача 3", "Описание подзадачи 3", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask3);
 
         epic.removeAllSubTasks();
@@ -211,7 +211,7 @@ public class EpicTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask1);
 
         Assertions.assertEquals(TaskStatus.NEW, epic.getStatus());
@@ -222,7 +222,7 @@ public class EpicTest {
         subTask1.setStatus(TaskStatus.DONE);
         Assertions.assertEquals(TaskStatus.DONE, epic.getStatus());
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask2);
 
         Assertions.assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
@@ -244,13 +244,13 @@ public class EpicTest {
 
         LocalDateTime startTime = LocalDateTime.now();
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", startTime, Duration.ofHours(1), epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", startTime, Duration.ofHours(1), epic.getId());
         epic.addSubTask(subTask1);
 
         Assertions.assertTrue(epic.getStartTime().isPresent());
         Assertions.assertEquals(startTime, epic.getStartTime().get());
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", startTime.plusHours(1), Duration.ofHours(1), epic);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", startTime.plusHours(1), Duration.ofHours(1), epic.getId());
         epic.addSubTask(subTask2);
 
         Assertions.assertTrue(epic.getStartTime().isPresent());
@@ -262,13 +262,13 @@ public class EpicTest {
         Epic epic = new Epic("Эпик", "Описание эпика");
         Assertions.assertTrue(epic.getDuration().isEmpty());
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(1), epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", LocalDateTime.now(), Duration.ofHours(1), epic.getId());
         epic.addSubTask(subTask1);
 
         Assertions.assertTrue(epic.getDuration().isPresent());
         Assertions.assertEquals(1, epic.getDuration().get().toHours());
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1), epic);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", LocalDateTime.now().plusHours(1), Duration.ofHours(1), epic.getId());
         epic.addSubTask(subTask2);
 
         Assertions.assertTrue(epic.getDuration().isPresent());
@@ -282,13 +282,13 @@ public class EpicTest {
 
         LocalDateTime startTime = LocalDateTime.now();
 
-        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", startTime, Duration.ofHours(1), epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", startTime, Duration.ofHours(1), epic.getId());
         epic.addSubTask(subTask1);
 
         Assertions.assertTrue(epic.getEndTime().isPresent());
         Assertions.assertEquals(startTime.plusHours(1), epic.getEndTime().get());
 
-        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", startTime.plusHours(1), Duration.ofHours(5), epic);
+        SubTask subTask2 = new SubTask("Подзадача 2", "Описание подзадачи 2", startTime.plusHours(1), Duration.ofHours(5), epic.getId());
         epic.addSubTask(subTask2);
 
         Assertions.assertTrue(epic.getEndTime().isPresent());
@@ -305,7 +305,7 @@ public class EpicTest {
         String expected = epic.getClass().getSimpleName() + "{" + "id: " + epic.getId() + ", name: " + epic.getName() + ", description: " + epic.getDescription() + ", status: " + epic.getStatus().name() + ", startTime: null" + ", duration: null" + ", sub_task_count: " + epic.getAllSubTasks().size() + "}";
         Assertions.assertEquals(expected, epic.toString());
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask);
 
         Assertions.assertTrue(epic.getStartTime().isPresent());
@@ -319,7 +319,7 @@ public class EpicTest {
     public void cloneEpicTest() {
         Epic epic = new Epic("Эпик", "Описание эпика");
 
-        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic);
+        SubTask subTask = new SubTask("Подзадача", "Описание подзадачи", LocalDateTime.now(), Duration.ofHours(8), epic.getId());
         epic.addSubTask(subTask);
 
         Epic epicClone = Epic.clone(epic);

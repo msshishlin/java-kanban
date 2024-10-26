@@ -186,11 +186,11 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " пересекается с другой задачей по времени выполнения");
         }
 
-        if (!this.epics.containsKey(subTask.getEpic().getId())) {
+        if (!this.epics.containsKey(subTask.getEpicId())) {
             throw new IllegalStateException("Создание подзадачи возможно только после создания эпика");
         }
 
-        if (this.epics.get(subTask.getEpic().getId()).getSubTaskById(subTask.getId()).isEmpty()) {
+        if (this.epics.get(subTask.getEpicId()).getSubTaskById(subTask.getId()).isEmpty()) {
             throw new IllegalStateException("Создание подзадачи возможно только после её добавления в эпик");
         }
 
@@ -223,7 +223,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<SubTask> getSubTasksByEpic(Epic epic) {
-        return this.subTasks.values().stream().filter(st -> st.getEpic().equals(epic)).toList();
+        return this.subTasks.values().stream().filter(st -> st.getEpicId() == epic.getId()).toList();
     }
 
     /**
@@ -251,7 +251,11 @@ public class InMemoryTaskManager implements TaskManager {
             throw new IllegalStateException("Подзадача с идентификатором " + subTask.getId() + " не найдена");
         }
 
-        subTask.getEpic().updateSubTask(subTask);
+        Optional<Epic> epic = this.getEpicById(subTask.getEpicId());
+        if (epic.isEmpty()) {
+            throw new IllegalStateException("Эпик с идентификатором " + subTask.getEpicId() + " не найден");
+        }
+        epic.get().updateSubTask(subTask);
 
         this.prioritizedTasks.remove(subTask);
         this.prioritizedTasks.add(subTask);
@@ -271,7 +275,11 @@ public class InMemoryTaskManager implements TaskManager {
 
         SubTask subTask = this.subTasks.get(subTaskId);
 
-        subTask.getEpic().removeSubTask(subTask);
+        Optional<Epic> epic = this.getEpicById(subTask.getEpicId());
+        if (epic.isEmpty()) {
+            throw new IllegalStateException("Эпик с идентификатором " + subTask.getEpicId() + " не найден");
+        }
+        epic.get().removeSubTask(subTask);
 
         this.historyManager.remove(subTaskId);
         this.prioritizedTasks.remove(this.subTasks.get(subTaskId));
@@ -284,9 +292,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllSubTasks() {
         for (SubTask subTask : this.subTasks.values()) {
-            Epic epic = subTask.getEpic();
+            Optional<Epic> epic = this.getEpicById(subTask.getEpicId());
+            if (epic.isEmpty()) {
+                throw new IllegalStateException("Эпик с идентификатором " + subTask.getEpicId() + " не найден");
+            }
 
-            epic.removeSubTask(subTask);
+            epic.get().removeSubTask(subTask);
 
             this.historyManager.remove(subTask.getId());
             this.prioritizedTasks.remove(subTask);

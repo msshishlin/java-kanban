@@ -25,15 +25,15 @@ public class Main {
         Epic epic1 = new Epic("Эпик №1", "Эпик с 3 подзадачами");
         taskManager.createEpic(epic1);
 
-        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask1 = new SubTask("Подзадача №1", "Описание подзадачи №1", LocalDateTime.now(), Duration.ofHours(8), epic1.getId());
         epic1.addSubTask(subTask1);
         taskManager.createSubTask(subTask1);
 
-        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask2 = new SubTask("Подзадача №2", "Описание подзадачи №2", LocalDateTime.now(), Duration.ofHours(8), epic1.getId());
         epic1.addSubTask(subTask2);
         taskManager.createSubTask(subTask2);
 
-        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now(), Duration.ofHours(8), epic1);
+        SubTask subTask3 = new SubTask("Подзадача №3", "Описание подзадачи №3", LocalDateTime.now(), Duration.ofHours(8), epic1.getId());
         epic1.addSubTask(subTask3);
         taskManager.createSubTask(subTask3);
 
