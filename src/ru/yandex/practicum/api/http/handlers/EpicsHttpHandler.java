@@ -44,6 +44,7 @@ public final class EpicsHttpHandler extends BaseHttpHandler {
                 this.sendText(httpExchange, this.gson.toJson(this.taskManager.getAllEpics()));
                 return;
             } catch (Exception ex) {
+                System.out.println(ex.getMessage());
                 this.sendInternalServerError(httpExchange);
                 return;
             }
@@ -96,8 +97,10 @@ public final class EpicsHttpHandler extends BaseHttpHandler {
             }
             this.sendCreated(httpExchange);
         } catch (IllegalArgumentException | IllegalStateException ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange, ex.getMessage());
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendInternalServerError(httpExchange);
         }
     }
@@ -119,6 +122,7 @@ public final class EpicsHttpHandler extends BaseHttpHandler {
         try {
             epicId = Integer.parseInt(pathParts[2]);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange);
             return;
         }
@@ -126,7 +130,9 @@ public final class EpicsHttpHandler extends BaseHttpHandler {
         try {
             this.taskManager.removeEpicById(epicId);
         } catch (IllegalStateException ex) {
+            System.out.println(ex.getMessage());
             this.sendNotFound(httpExchange);
+            return;
         }
 
         this.sendOk(httpExchange);

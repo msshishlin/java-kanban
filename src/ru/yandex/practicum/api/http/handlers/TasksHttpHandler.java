@@ -54,6 +54,7 @@ public final class TasksHttpHandler extends BaseHttpHandler {
         try {
             taskId = Integer.parseInt(pathParts[2]);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange);
             return;
         }
@@ -85,8 +86,10 @@ public final class TasksHttpHandler extends BaseHttpHandler {
             }
             this.sendCreated(httpExchange);
         } catch (IllegalArgumentException | IllegalStateException ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange, ex.getMessage());
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendInternalServerError(httpExchange);
         }
     }
@@ -108,6 +111,7 @@ public final class TasksHttpHandler extends BaseHttpHandler {
         try {
             taskId = Integer.parseInt(pathParts[2]);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange);
             return;
         }
@@ -115,7 +119,9 @@ public final class TasksHttpHandler extends BaseHttpHandler {
         try {
             this.taskManager.removeTaskById(taskId);
         } catch (IllegalStateException ex) {
+            System.out.println(ex.getMessage());
             this.sendNotFound(httpExchange);
+            return;
         }
 
         this.sendOk(httpExchange);

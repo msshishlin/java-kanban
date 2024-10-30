@@ -45,6 +45,7 @@ public final class SubTasksHttpHandler extends BaseHttpHandler {
                 this.sendText(httpExchange, this.gson.toJson(this.taskManager.getAllSubTasks()));
                 return;
             } catch (Throwable ex) {
+                System.out.println(ex.getMessage());
                 this.sendInternalServerError(httpExchange);
                 return;
             }
@@ -60,6 +61,7 @@ public final class SubTasksHttpHandler extends BaseHttpHandler {
         try {
             subTaskId = Integer.parseInt(pathParts[2]);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange);
             return;
         }
@@ -105,8 +107,10 @@ public final class SubTasksHttpHandler extends BaseHttpHandler {
             }
             this.sendCreated(httpExchange);
         } catch (IllegalArgumentException | IllegalStateException ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange, ex.getMessage());
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendInternalServerError(httpExchange);
         }
     }
@@ -128,6 +132,7 @@ public final class SubTasksHttpHandler extends BaseHttpHandler {
         try {
             subTaskId = Integer.parseInt(pathParts[2]);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             this.sendBadRequest(httpExchange);
             return;
         }
@@ -135,7 +140,9 @@ public final class SubTasksHttpHandler extends BaseHttpHandler {
         try {
             this.taskManager.removeSubTaskById(subTaskId);
         } catch (IllegalStateException ex) {
+            System.out.println(ex.getMessage());
             this.sendNotFound(httpExchange);
+            return;
         }
 
         this.sendOk(httpExchange);
