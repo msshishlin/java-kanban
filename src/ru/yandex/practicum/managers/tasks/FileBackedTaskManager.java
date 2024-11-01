@@ -82,7 +82,7 @@ public final class FileBackedTaskManager extends InMemoryTaskManager {
                             break;
                         }
 
-                        SubTask subTask = new SubTask(id, name, description, status, startTime, duration, epic.get());
+                        SubTask subTask = new SubTask(id, name, description, status, startTime, duration, epic.get().getId());
                         epic.get().addSubTask(subTask);
 
                         taskManager.createSubTask(subTask);

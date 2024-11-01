@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
  */
 public final class SubTask extends Task {
     /**
-     * Эпик.
+     * Идентификатор эпика.
      */
-    private final Epic epic;
+    private final int epicId;
 
     /**
      * Конструктор.
@@ -26,16 +26,16 @@ public final class SubTask extends Task {
      * @param description описание задачи.
      * @param startTime   дата и время, когда предполагается приступить к выполнению задачи.
      * @param duration    продолжительность задачи - оценка того, сколько времени она займёт в минутах.
-     * @param epic        эпик.
+     * @param epicId      идентификатор эпик.
      */
-    public SubTask(String name, String description, LocalDateTime startTime, Duration duration, Epic epic) {
+    public SubTask(String name, String description, LocalDateTime startTime, Duration duration, int epicId) {
         super(name, description, startTime, duration);
 
-        if (epic == null) {
-            throw new IllegalArgumentException("Parameter 'epic' can't be null");
+        if (epicId <= 0) {
+            throw new IllegalArgumentException("Parameter 'epicId' can't zero or negative");
         }
 
-        this.epic = epic;
+        this.epicId = epicId;
     }
 
     /**
@@ -47,16 +47,16 @@ public final class SubTask extends Task {
      * @param status      статус задачи.
      * @param startTime   дата и время, когда предполагается приступить к выполнению задачи.
      * @param duration    продолжительность задачи - оценка того, сколько времени она займёт в минутах.
-     * @param epic        эпик.
+     * @param epicId      идентификатор эпик.
      */
-    public SubTask(int id, String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration, Epic epic) {
+    public SubTask(int id, String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration, int epicId) {
         super(id, name, description, status, startTime, duration);
 
-        if (epic == null) {
-            throw new IllegalArgumentException("Parameter 'epic' can't be null");
+        if (epicId <= 0) {
+            throw new IllegalArgumentException("Parameter 'epicId' can't zero or negative");
         }
 
-        this.epic = epic;
+        this.epicId = epicId;
     }
 
     /**
@@ -66,16 +66,16 @@ public final class SubTask extends Task {
      * @return клон подзадачи.
      */
     public static SubTask clone(SubTask subTask) {
-        return new SubTask(subTask.id, subTask.name, subTask.description, subTask.status, subTask.startTime, subTask.duration, subTask.epic);
+        return new SubTask(subTask.id, subTask.name, subTask.description, subTask.status, subTask.startTime, subTask.duration, subTask.epicId);
     }
 
     /**
-     * Получить эпик.
+     * Получить идентификатор эпик.
      *
-     * @return эпик.
+     * @return идентификатор эпика.
      */
-    public Epic getEpic() {
-        return this.epic;
+    public int getEpicId() {
+        return this.epicId;
     }
 
     // region Overrides of ru.yandex.practicum.models.Task
@@ -87,7 +87,7 @@ public final class SubTask extends Task {
      */
     @Override
     public String toCsvString() {
-        return String.join(",", String.valueOf(this.id), TaskType.SUBTASK.name(), this.name, this.status.name(), this.description, this.startTime.toString(), this.duration.toString(), String.valueOf(this.epic.getId()));
+        return String.join(",", String.valueOf(this.id), TaskType.SUBTASK.name(), this.name, this.status.name(), this.description, this.startTime.toString(), this.duration.toString(), String.valueOf(this.epicId));
     }
 
     // endregion
@@ -96,7 +96,7 @@ public final class SubTask extends Task {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", name: " + this.name + ", description: " + this.description + ", status: " + this.status.name() + ", startTime: " + this.startTime + ", duration: " + this.duration + ", epic: " + this.epic + "}";
+        return this.getClass().getSimpleName() + "{" + "id: " + this.id + ", name: " + this.name + ", description: " + this.description + ", status: " + this.status.name() + ", startTime: " + this.startTime + ", duration: " + this.duration + ", epicId: " + this.epicId + "}";
     }
 
     // endregion

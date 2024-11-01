@@ -11,8 +11,10 @@ import ru.yandex.practicum.models.Task;
 // endregion
 
 public class Managers {
+    private static final TaskManager taskManagerInstance = new InMemoryTaskManager();
+
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        return taskManagerInstance;
     }
 
     public static HistoryManager<Integer, Task> getDefaultHistory() {
